@@ -48,77 +48,15 @@ dataset_df.head(3)
 #+end_src
 
 #+RESULTS:
-:RESULTS:
-: zsh:1: command not found: wget
-# [goto error]
-#+begin_example
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mFileNotFoundError[0m                         Traceback (most recent call last)
-Cell [0;32mIn[3], line 5[0m
-[1;32m      2[0m get_ipython()[38;5;241m.[39msystem([38;5;124m'[39m[38;5;124mwget -q https://storage.googleapis.com/download.tensorflow.org/data/palmer_penguins/penguins.csv -O /tmp/penguins.csv[39m[38;5;124m'[39m)
-[1;32m      4[0m [38;5;66;03m# Load the dataset into Pandas DataFrame[39;00m
-[0;32m----> 5[0m dataset_df [38;5;241m=[39m [43mpd[49m[38;5;241;43m.[39;49m[43mread_csv[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43m/tmp/penguins.csv[39;49m[38;5;124;43m"[39;49m[43m)[49m
-[1;32m      7[0m [38;5;66;03m# Display the first 3 examples[39;00m
-[1;32m      8[0m dataset_df[38;5;241m.[39mhead([38;5;241m3[39m)
-
-File [0;32m~/miniforge3/envs/tensorflow-df/lib/python3.10/site-packages/pandas/io/parsers/readers.py:912[0m, in [0;36mread_csv[0;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)[0m
-[1;32m    899[0m kwds_defaults [38;5;241m=[39m _refine_defaults_read(
-[1;32m    900[0m     dialect,
-[1;32m    901[0m     delimiter,
-[0;32m   (...)[0m
-[1;32m    908[0m     dtype_backend[38;5;241m=[39mdtype_backend,
-[1;32m    909[0m )
-[1;32m    910[0m kwds[38;5;241m.[39mupdate(kwds_defaults)
-[0;32m--> 912[0m [38;5;28;01mreturn[39;00m [43m_read[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[43mkwds[49m[43m)[49m
-
-File [0;32m~/miniforge3/envs/tensorflow-df/lib/python3.10/site-packages/pandas/io/parsers/readers.py:577[0m, in [0;36m_read[0;34m(filepath_or_buffer, kwds)[0m
-[1;32m    574[0m _validate_names(kwds[38;5;241m.[39mget([38;5;124m"[39m[38;5;124mnames[39m[38;5;124m"[39m, [38;5;28;01mNone[39;00m))
-[1;32m    576[0m [38;5;66;03m# Create the parser.[39;00m
-[0;32m--> 577[0m parser [38;5;241m=[39m [43mTextFileReader[49m[43m([49m[43mfilepath_or_buffer[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwds[49m[43m)[49m
-[1;32m    579[0m [38;5;28;01mif[39;00m chunksize [38;5;129;01mor[39;00m iterator:
-[1;32m    580[0m     [38;5;28;01mreturn[39;00m parser
-
-File [0;32m~/miniforge3/envs/tensorflow-df/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1407[0m, in [0;36mTextFileReader.__init__[0;34m(self, f, engine, **kwds)[0m
-[1;32m   1404[0m     [38;5;28mself[39m[38;5;241m.[39moptions[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m] [38;5;241m=[39m kwds[[38;5;124m"[39m[38;5;124mhas_index_names[39m[38;5;124m"[39m]
-[1;32m   1406[0m [38;5;28mself[39m[38;5;241m.[39mhandles: IOHandles [38;5;241m|[39m [38;5;28;01mNone[39;00m [38;5;241m=[39m [38;5;28;01mNone[39;00m
-[0;32m-> 1407[0m [38;5;28mself[39m[38;5;241m.[39m_engine [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_make_engine[49m[43m([49m[43mf[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mengine[49m[43m)[49m
-
-File [0;32m~/miniforge3/envs/tensorflow-df/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1661[0m, in [0;36mTextFileReader._make_engine[0;34m(self, f, engine)[0m
-[1;32m   1659[0m     [38;5;28;01mif[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m mode:
-[1;32m   1660[0m         mode [38;5;241m+[39m[38;5;241m=[39m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m
-[0;32m-> 1661[0m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;241m=[39m [43mget_handle[49m[43m([49m
-[1;32m   1662[0m [43m    [49m[43mf[49m[43m,[49m
-[1;32m   1663[0m [43m    [49m[43mmode[49m[43m,[49m
-[1;32m   1664[0m [43m    [49m[43mencoding[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1665[0m [43m    [49m[43mcompression[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mcompression[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1666[0m [43m    [49m[43mmemory_map[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mmemory_map[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mFalse[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1667[0m [43m    [49m[43mis_text[49m[38;5;241;43m=[39;49m[43mis_text[49m[43m,[49m
-[1;32m   1668[0m [43m    [49m[43merrors[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mencoding_errors[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43mstrict[39;49m[38;5;124;43m"[39;49m[43m)[49m[43m,[49m
-[1;32m   1669[0m [43m    [49m[43mstorage_options[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43moptions[49m[38;5;241;43m.[39;49m[43mget[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43mstorage_options[39;49m[38;5;124;43m"[39;49m[43m,[49m[43m [49m[38;5;28;43;01mNone[39;49;00m[43m)[49m[43m,[49m
-[1;32m   1670[0m [43m[49m[43m)[49m
-[1;32m   1671[0m [38;5;28;01massert[39;00m [38;5;28mself[39m[38;5;241m.[39mhandles [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
-[1;32m   1672[0m f [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mhandles[38;5;241m.[39mhandle
-
-File [0;32m~/miniforge3/envs/tensorflow-df/lib/python3.10/site-packages/pandas/io/common.py:859[0m, in [0;36mget_handle[0;34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)[0m
-[1;32m    854[0m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(handle, [38;5;28mstr[39m):
-[1;32m    855[0m     [38;5;66;03m# Check whether the filename is to be opened in binary mode.[39;00m
-[1;32m    856[0m     [38;5;66;03m# Binary mode does not support 'encoding' and 'newline'.[39;00m
-[1;32m    857[0m     [38;5;28;01mif[39;00m ioargs[38;5;241m.[39mencoding [38;5;129;01mand[39;00m [38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m ioargs[38;5;241m.[39mmode:
-[1;32m    858[0m         [38;5;66;03m# Encoding[39;00m
-[0;32m--> 859[0m         handle [38;5;241m=[39m [38;5;28;43mopen[39;49m[43m([49m
-[1;32m    860[0m [43m            [49m[43mhandle[49m[43m,[49m
-[1;32m    861[0m [43m            [49m[43mioargs[49m[38;5;241;43m.[39;49m[43mmode[49m[43m,[49m
-[1;32m    862[0m [43m            [49m[43mencoding[49m[38;5;241;43m=[39;49m[43mioargs[49m[38;5;241;43m.[39;49m[43mencoding[49m[43m,[49m
-[1;32m    863[0m [43m            [49m[43merrors[49m[38;5;241;43m=[39;49m[43merrors[49m[43m,[49m
-[1;32m    864[0m [43m            [49m[43mnewline[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m"[39;49m[43m,[49m
-[1;32m    865[0m [43m        [49m[43m)[49m
-[1;32m    866[0m     [38;5;28;01melse[39;00m:
-[1;32m    867[0m         [38;5;66;03m# Binary mode[39;00m
-[1;32m    868[0m         handle [38;5;241m=[39m [38;5;28mopen[39m(handle, ioargs[38;5;241m.[39mmode)
-
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: '/tmp/penguins.csv'
-#+end_example
-:END:
+:   species     island  bill_length_mm  bill_depth_mm  flipper_length_mm
+: 0  Adelie  Torgersen            39.1           18.7              181.0  \
+: 1  Adelie  Torgersen            39.5           17.4              186.0
+: 2  Adelie  Torgersen            40.3           18.0              195.0
+:
+:    body_mass_g     sex  year
+: 0       3750.0    male  2007
+: 1       3800.0  female  2007
+: 2       3250.0  female  2007
 
 #+begin_src jupyter-python
 label = "species"
@@ -144,7 +82,7 @@ print("{} examples in training, {} examples for testing.".format(
 #+end_src
 
 #+RESULTS:
-: 238 examples in training, 106 examples for testing.
+: 235 examples in training, 109 examples for testing.
 
 #+begin_src jupyter-python
 train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label)
@@ -152,7 +90,7 @@ test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
 #+end_src
 
 #+RESULTS:
-: Metal device set to: Apple M1
+: Metal device set to: Apple M1 Max
 
 #+begin_src jupyter-python
 # Specify the model
@@ -165,8 +103,8 @@ model_1.fit(train_ds)
 #+RESULTS:
 :RESULTS:
 #+begin_example
-Use 8 thread(s) for training
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3sdntfzr as temporary training directory
+Use 10 thread(s) for training
+Use /var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmpwe5ry0gg as temporary training directory
 Reading training dataset...
 Training tensor examples:
 Features: {'island': <tf.Tensor 'data:0' shape=(None,) dtype=string>, 'bill_length_mm': <tf.Tensor 'data_1:0' shape=(None,) dtype=float64>, 'bill_depth_mm': <tf.Tensor 'data_2:0' shape=(None,) dtype=float64>, 'flipper_length_mm': <tf.Tensor 'data_3:0' shape=(None,) dtype=float64>, 'body_mass_g': <tf.Tensor 'data_4:0' shape=(None,) dtype=float64>, 'sex': <tf.Tensor 'data_5:0' shape=(None,) dtype=string>, 'year': <tf.Tensor 'data_6:0' shape=(None,) dtype=int64>}
@@ -174,16 +112,16 @@ Label: Tensor("data_7:0", shape=(None,), dtype=int64)
 Weights: None
 Normalized tensor features:
  {'island': SemanticTensor(semantic=<Semantic.CATEGORICAL: 2>, tensor=<tf.Tensor 'data:0' shape=(None,) dtype=string>), 'bill_length_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast:0' shape=(None,) dtype=float32>), 'bill_depth_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_1:0' shape=(None,) dtype=float32>), 'flipper_length_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_2:0' shape=(None,) dtype=float32>), 'body_mass_g': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_3:0' shape=(None,) dtype=float32>), 'sex': SemanticTensor(semantic=<Semantic.CATEGORICAL: 2>, tensor=<tf.Tensor 'data_5:0' shape=(None,) dtype=string>), 'year': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_4:0' shape=(None,) dtype=float32>)}
-Training dataset read in 0:00:01.843139. Found 238 examples.
+2023-05-19 17:22:13.819025: W tensorflow/tsl/platform/profile_utils/cpu_utils.cc:128] Failed to get CPU frequency: 0 Hz
+Training dataset read in 0:00:02.049508. Found 235 examples.
 Training model...
 Standard output detected as not visible to the user e.g. running in a notebook. Creating a training log redirection. If training gets stuck, try calling tfdf.keras.set_training_logs_redirection(False).
-2023-05-18 15:20:28.528044: W tensorflow/tsl/platform/profile_utils/cpu_utils.cc:128] Failed to get CPU frequency: 0 Hz
 
-systemMemory: 8.00 GB
-maxCacheSize: 2.67 GB
-[INFO 23-05-18 15:20:28.5839 CDT kernel.cc:773] Start Yggdrasil model training
-[INFO 23-05-18 15:20:28.5851 CDT kernel.cc:774] Collect training examples
-[INFO 23-05-18 15:20:28.5851 CDT kernel.cc:787] Dataspec guide:
+systemMemory: 32.00 GB
+maxCacheSize: 10.67 GB
+[INFO 23-05-19 17:22:14.0487 CDT kernel.cc:773] Start Yggdrasil model training
+[INFO 23-05-19 17:22:14.0498 CDT kernel.cc:774] Collect training examples
+[INFO 23-05-19 17:22:14.0498 CDT kernel.cc:787] Dataspec guide:
 column_guides {
   column_name_pattern: "^__LABEL$"
   type: CATEGORICAL
@@ -202,10 +140,10 @@ default_column_guide {
 }
 ignore_columns_without_guides: false
 detect_numerical_as_discretized_numerical: false
-[INFO 23-05-18 15:20:28.5875 CDT kernel.cc:393] Number of batches: 1
-[INFO 23-05-18 15:20:28.5875 CDT kernel.cc:394] Number of examples: 238
-[INFO 23-05-18 15:20:28.5878 CDT kernel.cc:794] Training dataset:
-Number of records: 238
+[INFO 23-05-19 17:22:14.0507 CDT kernel.cc:393] Number of batches: 1
+[INFO 23-05-19 17:22:14.0507 CDT kernel.cc:394] Number of examples: 235
+[INFO 23-05-19 17:22:14.0509 CDT kernel.cc:794] Training dataset:
+Number of records: 235
 Number of columns: 8
 
 Number of columns by type:
@@ -215,16 +153,16 @@ Number of columns by type:
 Columns:
 
 NUMERICAL: 5 (62.5%)
-	1: "bill_depth_mm" NUMERICAL num-nas:2 (0.840336%) mean:17.0199 min:13.2 max:21.5 sd:1.91568
-	2: "bill_length_mm" NUMERICAL num-nas:2 (0.840336%) mean:43.9254 min:32.1 max:58 sd:5.40425
-	3: "body_mass_g" NUMERICAL num-nas:2 (0.840336%) mean:4212.71 min:2700 max:6300 sd:815.798
-	4: "flipper_length_mm" NUMERICAL num-nas:2 (0.840336%) mean:201.161 min:174 max:231 sd:13.9879
-	7: "year" NUMERICAL mean:2008.04 min:2007 max:2009 sd:0.818843
+	1: "bill_depth_mm" NUMERICAL num-nas:2 (0.851064%) mean:17.1133 min:13.1 max:21.5 sd:1.96566
+	2: "bill_length_mm" NUMERICAL num-nas:2 (0.851064%) mean:44.0124 min:32.1 max:59.6 sd:5.50772
+	3: "body_mass_g" NUMERICAL num-nas:2 (0.851064%) mean:4178.86 min:2700 max:6050 sd:796.897
+	4: "flipper_length_mm" NUMERICAL num-nas:2 (0.851064%) mean:200.768 min:172 max:231 sd:13.9379
+	7: "year" NUMERICAL mean:2008.04 min:2007 max:2009 sd:0.818859
 
 CATEGORICAL: 3 (37.5%)
 	0: "__LABEL" CATEGORICAL integerized vocab-size:4 no-ood-item
-	5: "island" CATEGORICAL has-dict vocab-size:4 zero-ood-items most-frequent:"Biscoe" 121 (50.8403%)
-	6: "sex" CATEGORICAL num-nas:8 (3.36134%) has-dict vocab-size:3 zero-ood-items most-frequent:"female" 118 (51.3043%)
+	5: "island" CATEGORICAL has-dict vocab-size:4 zero-ood-items most-frequent:"Biscoe" 107 (45.5319%)
+	6: "sex" CATEGORICAL num-nas:10 (4.25532%) has-dict vocab-size:3 zero-ood-items most-frequent:"female" 115 (51.1111%)
 
 Terminology:
 	nas: Number of non-available (i.e. missing) values.
@@ -234,8 +172,8 @@ Terminology:
 	has-dict: The attribute is attached to a string dictionary e.g. a categorical attribute stored as a string.
 	vocab-size: Number of unique values.
 
-[INFO 23-05-18 15:20:28.5884 CDT kernel.cc:810] Configure learner
-[INFO 23-05-18 15:20:28.5885 CDT kernel.cc:824] Training config:
+[INFO 23-05-19 17:22:14.0512 CDT kernel.cc:810] Configure learner
+[INFO 23-05-19 17:22:14.0513 CDT kernel.cc:824] Training config:
 learner: "RANDOM_FOREST"
 features: "^bill_depth_mm$"
 features: "^bill_length_mm$"
@@ -292,91 +230,89 @@ pure_serving_model: false
   sampling_with_replacement: true
 }
 
-[INFO 23-05-18 15:20:28.5886 CDT kernel.cc:827] Deployment config:
-cache_path: "/var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3sdntfzr/working_cache"
-num_threads: 8
+[INFO 23-05-19 17:22:14.0514 CDT kernel.cc:827] Deployment config:
+cache_path: "/var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmpwe5ry0gg/working_cache"
+num_threads: 10
 try_resume_training: true
-[INFO 23-05-18 15:20:28.5890 CDT kernel.cc:889] Train model
-[INFO 23-05-18 15:20:28.5896 CDT random_forest.cc:416] Training random forest on 238 example(s) and 7 feature(s).
-[INFO 23-05-18 15:20:28.5931 CDT random_forest.cc:805] Training of tree  1/300 (tree index:4) done accuracy:0.94382 logloss:2.02492
-[INFO 23-05-18 15:20:28.5933 CDT random_forest.cc:805] Training of tree  11/300 (tree index:10) done accuracy:0.974026 logloss:0.507284
-[INFO 23-05-18 15:20:28.5937 CDT random_forest.cc:805] Training of tree  21/300 (tree index:21) done accuracy:0.978992 logloss:0.205003
-[INFO 23-05-18 15:20:28.5940 CDT random_forest.cc:805] Training of tree  31/300 (tree index:31) done accuracy:0.978992 logloss:0.213673
-[INFO 23-05-18 15:20:28.5943 CDT random_forest.cc:805] Training of tree  42/300 (tree index:42) done accuracy:0.97479 logloss:0.221349
-[INFO 23-05-18 15:20:28.5946 CDT random_forest.cc:805] Training of tree  52/300 (tree index:52) done accuracy:0.97479 logloss:0.0789149
-[INFO 23-05-18 15:20:28.5949 CDT random_forest.cc:805] Training of tree  62/300 (tree index:64) done accuracy:0.97479 logloss:0.0833298
-[INFO 23-05-18 15:20:28.5952 CDT random_forest.cc:805] Training of tree  73/300 (tree index:71) done accuracy:0.970588 logloss:0.0825267
-[INFO 23-05-18 15:20:28.5956 CDT random_forest.cc:805] Training of tree  83/300 (tree index:86) done accuracy:0.970588 logloss:0.0840707
-[INFO 23-05-18 15:20:28.5958 CDT random_forest.cc:805] Training of tree  93/300 (tree index:95) done accuracy:0.970588 logloss:0.081813
-[INFO 23-05-18 15:20:28.5962 CDT random_forest.cc:805] Training of tree  103/300 (tree index:101) done accuracy:0.970588 logloss:0.0803573
-[INFO 23-05-18 15:20:28.5964 CDT random_forest.cc:805] Training of tree  113/300 (tree index:115) done accuracy:0.970588 logloss:0.081543
-[INFO 23-05-18 15:20:28.5967 CDT random_forest.cc:805] Training of tree  123/300 (tree index:121) done accuracy:0.97479 logloss:0.0811422
-[INFO 23-05-18 15:20:28.5970 CDT random_forest.cc:805] Training of tree  133/300 (tree index:137) done accuracy:0.966387 logloss:0.0806071
-[INFO 23-05-18 15:20:28.5973 CDT random_forest.cc:805] Training of tree  143/300 (tree index:141) done accuracy:0.966387 logloss:0.0810282
-[INFO 23-05-18 15:20:28.5976 CDT random_forest.cc:805] Training of tree  153/300 (tree index:156) done accuracy:0.966387 logloss:0.0798571
-[INFO 23-05-18 15:20:28.5978 CDT random_forest.cc:805] Training of tree  164/300 (tree index:163) done accuracy:0.966387 logloss:0.0798446
-[INFO 23-05-18 15:20:28.5981 CDT random_forest.cc:805] Training of tree  174/300 (tree index:175) done accuracy:0.966387 logloss:0.0810177
-[INFO 23-05-18 15:20:28.5983 CDT random_forest.cc:805] Training of tree  184/300 (tree index:185) done accuracy:0.966387 logloss:0.0807455
-[INFO 23-05-18 15:20:28.5986 CDT random_forest.cc:805] Training of tree  194/300 (tree index:196) done accuracy:0.962185 logloss:0.0816495
-[INFO 23-05-18 15:20:28.5988 CDT random_forest.cc:805] Training of tree  205/300 (tree index:205) done accuracy:0.962185 logloss:0.0815769
-[INFO 23-05-18 15:20:28.5990 CDT random_forest.cc:805] Training of tree  215/300 (tree index:209) done accuracy:0.962185 logloss:0.0814126
-[INFO 23-05-18 15:20:28.5992 CDT random_forest.cc:805] Training of tree  226/300 (tree index:227) done accuracy:0.966387 logloss:0.0819398
-[INFO 23-05-18 15:20:28.5994 CDT random_forest.cc:805] Training of tree  236/300 (tree index:236) done accuracy:0.966387 logloss:0.0808412
-[INFO 23-05-18 15:20:28.5997 CDT random_forest.cc:805] Training of tree  246/300 (tree index:247) done accuracy:0.966387 logloss:0.0816298
-[INFO 23-05-18 15:20:28.6000 CDT random_forest.cc:805] Training of tree  258/300 (tree index:258) done accuracy:0.966387 logloss:0.0801306
-[INFO 23-05-18 15:20:28.6003 CDT random_forest.cc:805] Training of tree  268/300 (tree index:270) done accuracy:0.970588 logloss:0.0810539
-[INFO 23-05-18 15:20:28.6005 CDT random_forest.cc:805] Training of tree  278/300 (tree index:278) done accuracy:0.966387 logloss:0.0804086
-[INFO 23-05-18 15:20:28.6007 CDT random_forest.cc:805] Training of tree  288/300 (tree index:290) done accuracy:0.970588 logloss:0.0806902
-[INFO 23-05-18 15:20:28.6009 CDT random_forest.cc:805] Training of tree  298/300 (tree index:297) done accuracy:0.970588 logloss:0.0808522
-[INFO 23-05-18 15:20:28.6010 CDT random_forest.cc:805] Training of tree  300/300 (tree index:296) done accuracy:0.970588 logloss:0.0807255
-[INFO 23-05-18 15:20:28.6010 CDT random_forest.cc:885] Final OOB metrics: accuracy:0.970588 logloss:0.0807255
-[INFO 23-05-18 15:20:28.6013 CDT kernel.cc:926] Export model in log directory: /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3sdntfzr with prefix 60b0730c01ad4910
-[INFO 23-05-18 15:20:28.6053 CDT kernel.cc:944] Save model in resources
-[INFO 23-05-18 15:20:28.6084 CDT abstract_model.cc:849] Model self evaluation:
-Number of predictions (without weights): 238
-Number of predictions (with weights): 238
+[INFO 23-05-19 17:22:14.0518 CDT kernel.cc:889] Train model
+[INFO 23-05-19 17:22:14.0520 CDT random_forest.cc:416] Training random forest on 235 example(s) and 7 feature(s).
+[INFO 23-05-19 17:22:14.0539 CDT random_forest.cc:805] Training of tree  1/300 (tree index:8) done accuracy:0.910112 logloss:3.23988
+[INFO 23-05-19 17:22:14.0541 CDT random_forest.cc:805] Training of tree  12/300 (tree index:12) done accuracy:0.943231 logloss:1.30503
+[INFO 23-05-19 17:22:14.0543 CDT random_forest.cc:805] Training of tree  23/300 (tree index:22) done accuracy:0.953192 logloss:0.394233
+[INFO 23-05-19 17:22:14.0545 CDT random_forest.cc:805] Training of tree  35/300 (tree index:35) done accuracy:0.965957 logloss:0.390056
+[INFO 23-05-19 17:22:14.0547 CDT random_forest.cc:805] Training of tree  45/300 (tree index:45) done accuracy:0.970213 logloss:0.241466
+[INFO 23-05-19 17:22:14.0550 CDT random_forest.cc:805] Training of tree  56/300 (tree index:58) done accuracy:0.970213 logloss:0.240155
+[INFO 23-05-19 17:22:14.0551 CDT random_forest.cc:805] Training of tree  68/300 (tree index:67) done accuracy:0.970213 logloss:0.240307
+[INFO 23-05-19 17:22:14.0554 CDT random_forest.cc:805] Training of tree  80/300 (tree index:75) done accuracy:0.970213 logloss:0.240302
+[INFO 23-05-19 17:22:14.0556 CDT random_forest.cc:805] Training of tree  90/300 (tree index:89) done accuracy:0.970213 logloss:0.0997129
+[INFO 23-05-19 17:22:14.0557 CDT random_forest.cc:805] Training of tree  100/300 (tree index:100) done accuracy:0.978723 logloss:0.0949417
+[INFO 23-05-19 17:22:14.0559 CDT random_forest.cc:805] Training of tree  110/300 (tree index:109) done accuracy:0.974468 logloss:0.0953088
+[INFO 23-05-19 17:22:14.0561 CDT random_forest.cc:805] Training of tree  122/300 (tree index:120) done accuracy:0.974468 logloss:0.096616
+[INFO 23-05-19 17:22:14.0563 CDT random_forest.cc:805] Training of tree  132/300 (tree index:130) done accuracy:0.974468 logloss:0.0966673
+[INFO 23-05-19 17:22:14.0566 CDT random_forest.cc:805] Training of tree  142/300 (tree index:141) done accuracy:0.974468 logloss:0.0968194
+[INFO 23-05-19 17:22:14.0567 CDT random_forest.cc:805] Training of tree  152/300 (tree index:152) done accuracy:0.974468 logloss:0.0967422
+[INFO 23-05-19 17:22:14.0570 CDT random_forest.cc:805] Training of tree  163/300 (tree index:162) done accuracy:0.974468 logloss:0.0952728
+[INFO 23-05-19 17:22:14.0572 CDT random_forest.cc:805] Training of tree  175/300 (tree index:175) done accuracy:0.970213 logloss:0.0952571
+[INFO 23-05-19 17:22:14.0573 CDT random_forest.cc:805] Training of tree  185/300 (tree index:174) done accuracy:0.970213 logloss:0.095572
+[INFO 23-05-19 17:22:14.0576 CDT random_forest.cc:805] Training of tree  195/300 (tree index:195) done accuracy:0.970213 logloss:0.0959348
+[INFO 23-05-19 17:22:14.0577 CDT random_forest.cc:805] Training of tree  206/300 (tree index:200) done accuracy:0.970213 logloss:0.0964578
+[INFO 23-05-19 17:22:14.0579 CDT random_forest.cc:805] Training of tree  216/300 (tree index:215) done accuracy:0.974468 logloss:0.0959382
+[INFO 23-05-19 17:22:14.0581 CDT random_forest.cc:805] Training of tree  226/300 (tree index:225) done accuracy:0.978723 logloss:0.096229
+[INFO 23-05-19 17:22:14.0583 CDT random_forest.cc:805] Training of tree  237/300 (tree index:236) done accuracy:0.974468 logloss:0.0973237
+[INFO 23-05-19 17:22:14.0585 CDT random_forest.cc:805] Training of tree  249/300 (tree index:248) done accuracy:0.974468 logloss:0.0985853
+[INFO 23-05-19 17:22:14.0588 CDT random_forest.cc:805] Training of tree  260/300 (tree index:259) done accuracy:0.974468 logloss:0.0982098
+[INFO 23-05-19 17:22:14.0590 CDT random_forest.cc:805] Training of tree  271/300 (tree index:270) done accuracy:0.974468 logloss:0.0980791
+[INFO 23-05-19 17:22:14.0591 CDT random_forest.cc:805] Training of tree  281/300 (tree index:280) done accuracy:0.974468 logloss:0.0984111
+[INFO 23-05-19 17:22:14.0593 CDT random_forest.cc:805] Training of tree  291/300 (tree index:291) done accuracy:0.974468 logloss:0.0987725
+[INFO 23-05-19 17:22:14.0595 CDT random_forest.cc:805] Training of tree  300/300 (tree index:295) done accuracy:0.974468 logloss:0.0994343
+[INFO 23-05-19 17:22:14.0595 CDT random_forest.cc:885] Final OOB metrics: accuracy:0.974468 logloss:0.0994343
+[INFO 23-05-19 17:22:14.0598 CDT kernel.cc:926] Export model in log directory: /var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmpwe5ry0gg with prefix d2471fb3ff7c4a40
+[INFO 23-05-19 17:22:14.0628 CDT kernel.cc:944] Save model in resources
+[INFO 23-05-19 17:22:14.0653 CDT abstract_model.cc:849] Model self evaluation:
+Number of predictions (without weights): 235
+Number of predictions (with weights): 235
 Task: CLASSIFICATION
 Label: __LABEL
 
-Accuracy: 0.970588  CI95[W][0.945468 0.986116]
-LogLoss: : 0.0807255
-ErrorRate: : 0.0294118
+Accuracy: 0.974468  CI95[W][0.950232 0.988824]
+LogLoss: : 0.0994343
+ErrorRate: : 0.0255319
 
-Default Accuracy: : 0.432773
-Default LogLoss: : 1.04215
-Default ErrorRate: : 0.567227
+Default Accuracy: : 0.434043
+Default LogLoss: : 1.05911
+Default ErrorRate: : 0.565957
 
 Confusion Table:
 truth\prediction
-   0    1   2   3
-0  0    0   0   0
-1  0  100   1   2
-2  0    2  89   0
-3  0    1   1  42
-Total: 238
+   0   1   2   3
+0  0   0   0   0
+1  0  99   1   2
+2  0   1  82   0
+3  0   2   0  48
+Total: 235
 
 One vs other classes:
-[INFO 23-05-18 15:20:28.6159 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3sdntfzr/model/ with prefix 60b0730c01ad4910
-[INFO 23-05-18 15:20:28.6264 CDT decision_forest.cc:660] Model loaded with 300 root(s), 3962 node(s), and 7 input feature(s).
-[INFO 23-05-18 15:20:28.6264 CDT abstract_model.cc:1312] Engine "RandomForestGeneric" built
-[INFO 23-05-18 15:20:28.6264 CDT kernel.cc:1074] Use fast generic engine
-Model trained in 0:00:00.048951
+[INFO 23-05-19 17:22:14.0723 CDT kernel.cc:1242] Loading model from path /var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmpwe5ry0gg/model/ with prefix d2471fb3ff7c4a40
+[INFO 23-05-19 17:22:14.0805 CDT decision_forest.cc:660] Model loaded with 300 root(s), 4634 node(s), and 7 input feature(s).
+[INFO 23-05-19 17:22:14.0805 CDT abstract_model.cc:1312] Engine "RandomForestGeneric" built
+[INFO 23-05-19 17:22:14.0805 CDT kernel.cc:1074] Use fast generic engine
+Model trained in 0:00:00.036589
 Compiling model...
-WARNING:tensorflow:AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x14b6ddee0> and will run it as-is.
+WARNING:tensorflow:AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x2b00f4d30> and will run it as-is.
 Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
 Cause: could not get source code
 To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
-WARNING:tensorflow:AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x14b6ddee0> and will run it as-is.
+WARNING:tensorflow:AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x2b00f4d30> and will run it as-is.
 Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
 Cause: could not get source code
 To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
-WARNING: AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x14b6ddee0> and will run it as-is.
+WARNING: AutoGraph could not transform <function simple_ml_inference_op_with_handle at 0x2b00f4d30> and will run it as-is.
 Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
 Cause: could not get source code
 To silence this warning, decorate the function with @tf.autograph.experimental.do_not_convert
 Model compiled.
 #+end_example
-: <keras.callbacks.History at 0x14b7a72e0>
+: <keras.callbacks.History at 0x2b00d5bd0>
 :END:
 * Evaluate the model
 
@@ -391,11 +327,11 @@ for name, value in evaluation.items():
 
 #+RESULTS:
 :RESULTS:
-: 1/1 [==============================] - 0s 177ms/step - loss: 0.0000e+00 - accuracy: 0.9811
+: 1/1 [==============================] - 0s 454ms/step - loss: 0.0000e+00 - accuracy: 1.0000
 :
 :
 : loss: 0.0000
-: accuracy: 0.9811
+: accuracy: 1.0000
 :END:
 
 * TensorFlow Serving
@@ -442,207 +378,208 @@ Input Features (7):
 No weights
 
 Variable Importance: INV_MEAN_MIN_DEPTH:
-    1. "flipper_length_mm"  0.460794 ################
-    2.    "bill_length_mm"  0.418617 ############
-    3.            "island"  0.325366 #####
-    4.     "bill_depth_mm"  0.322351 #####
-    5.       "body_mass_g"  0.277696 ##
-    6.               "sex"  0.246722
-    7.              "year"  0.246217
+    1. "flipper_length_mm"  0.426447 ################
+    2.    "bill_length_mm"  0.409912 ##############
+    3.            "island"  0.327954 #######
+    4.     "bill_depth_mm"  0.302838 #####
+    5.       "body_mass_g"  0.265318 ##
+    6.               "sex"  0.233728
+    7.              "year"  0.233178
 
 Variable Importance: NUM_AS_ROOT:
-    1. "flipper_length_mm" 162.000000 ################
-    2.    "bill_length_mm" 61.000000 #####
-    3.     "bill_depth_mm" 58.000000 #####
-    4.            "island" 12.000000
-    5.       "body_mass_g"  7.000000
+    1. "flipper_length_mm" 153.000000 ################
+    2.    "bill_length_mm" 55.000000 #####
+    3.            "island" 45.000000 ####
+    4.     "bill_depth_mm" 42.000000 ####
+    5.       "body_mass_g"  5.000000
 
 Variable Importance: NUM_NODES:
-    1.    "bill_length_mm" 581.000000 ################
-    2. "flipper_length_mm" 361.000000 #########
-    3.     "bill_depth_mm" 308.000000 ########
-    4.            "island" 300.000000 ########
-    5.       "body_mass_g" 248.000000 ######
-    6.               "sex" 21.000000
-    7.              "year" 12.000000
+    1.    "bill_length_mm" 678.000000 ################
+    2.     "bill_depth_mm" 442.000000 ##########
+    3. "flipper_length_mm" 374.000000 ########
+    4.            "island" 314.000000 #######
+    5.       "body_mass_g" 305.000000 ######
+    6.               "sex" 29.000000
+    7.              "year" 25.000000
 
 Variable Importance: SUM_SCORE:
-    1. "flipper_length_mm" 25283.701344 ################
-    2.    "bill_length_mm" 22842.222472 ##############
-    3.     "bill_depth_mm" 10507.301316 ######
-    4.            "island" 10015.296503 ######
-    5.       "body_mass_g" 2758.581479 #
-    6.               "sex" 128.278381
-    7.              "year" 21.255580
+    1.    "bill_length_mm" 23086.665045 ################
+    2. "flipper_length_mm" 22279.785376 ###############
+    3.            "island" 12917.421690 ########
+    4.     "bill_depth_mm" 9287.342407 ######
+    5.       "body_mass_g" 3417.259439 ##
+    6.               "sex" 207.275119
+    7.              "year" 70.325964
 
 
 
 Winner takes all: true
-Out-of-bag evaluation: accuracy:0.970588 logloss:0.0807255
+Out-of-bag evaluation: accuracy:0.974468 logloss:0.0994343
 Number of trees: 300
-Total number of nodes: 3962
+Total number of nodes: 4634
 
 Number of nodes by tree:
-Count: 300 Average: 13.2067 StdDev: 2.66782
-Min: 9 Max: 25 Ignored: 0
+Count: 300 Average: 15.4467 StdDev: 3.04639
+Min: 9 Max: 27 Ignored: 0
 ----------------------------------------------
-[  9, 10) 26   8.67%   8.67% ###
-[ 10, 11)  0   0.00%   8.67%
-[ 11, 12) 78  26.00%  34.67% ########
-[ 12, 13)  0   0.00%  34.67%
-[ 13, 14) 99  33.00%  67.67% ##########
-[ 14, 15)  0   0.00%  67.67%
-[ 15, 16) 55  18.33%  86.00% ######
-[ 16, 17)  0   0.00%  86.00%
-[ 17, 18) 27   9.00%  95.00% ###
-[ 18, 19)  0   0.00%  95.00%
-[ 19, 20) 11   3.67%  98.67% #
-[ 20, 21)  0   0.00%  98.67%
-[ 21, 22)  2   0.67%  99.33%
-[ 22, 23)  0   0.00%  99.33%
-[ 23, 24)  1   0.33%  99.67%
-[ 24, 25)  0   0.00%  99.67%
-[ 25, 25]  1   0.33% 100.00%
+[  9, 10)  3   1.00%   1.00%
+[ 10, 11)  0   0.00%   1.00%
+[ 11, 12) 27   9.00%  10.00% ###
+[ 12, 13)  0   0.00%  10.00%
+[ 13, 14) 68  22.67%  32.67% #######
+[ 14, 15)  0   0.00%  32.67%
+[ 15, 16) 94  31.33%  64.00% ##########
+[ 16, 17)  0   0.00%  64.00%
+[ 17, 18) 59  19.67%  83.67% ######
+[ 18, 19)  0   0.00%  83.67%
+[ 19, 20) 25   8.33%  92.00% ###
+[ 20, 21)  0   0.00%  92.00%
+[ 21, 22) 12   4.00%  96.00% #
+[ 22, 23)  0   0.00%  96.00%
+[ 23, 24)  9   3.00%  99.00% #
+[ 24, 25)  0   0.00%  99.00%
+[ 25, 26)  1   0.33%  99.33%
+[ 26, 27)  0   0.00%  99.33%
+[ 27, 27]  2   0.67% 100.00%
 
 Depth by leafs:
-Count: 2131 Average: 3.14172 StdDev: 0.995815
+Count: 2467 Average: 3.38265 StdDev: 1.04359
 Min: 1 Max: 7 Ignored: 0
 ----------------------------------------------
-[ 1, 2)  27   1.27%   1.27%
-[ 2, 3) 632  29.66%  30.92% #########
-[ 3, 4) 671  31.49%  62.41% ##########
-[ 4, 5) 639  29.99%  92.40% ##########
-[ 5, 6) 139   6.52%  98.92% ##
-[ 6, 7)  21   0.99%  99.91%
-[ 7, 7]   2   0.09% 100.00%
+[ 1, 2)   8   0.32%   0.32%
+[ 2, 3) 560  22.70%  23.02% #######
+[ 3, 4) 786  31.86%  54.88% ##########
+[ 4, 5) 761  30.85%  85.73% ##########
+[ 5, 6) 303  12.28%  98.01% ####
+[ 6, 7)  43   1.74%  99.76% #
+[ 7, 7]   6   0.24% 100.00%
 
 Number of training obs by leaf:
-Count: 2131 Average: 33.5054 StdDev: 34.0348
-Min: 5 Max: 109 Ignored: 0
+Count: 2467 Average: 28.5772 StdDev: 29.2001
+Min: 5 Max: 107 Ignored: 0
 ----------------------------------------------
-[   5,  10) 1033  48.47%  48.47% ##########
-[  10,  15)   66   3.10%  51.57% #
-[  15,  20)   39   1.83%  53.40%
-[  20,  26)   64   3.00%  56.41% #
-[  26,  31)   77   3.61%  60.02% #
-[  31,  36)   93   4.36%  64.38% #
-[  36,  41)   76   3.57%  67.95% #
-[  41,  47)   67   3.14%  71.09% #
-[  47,  52)   20   0.94%  72.03%
-[  52,  57)   16   0.75%  72.78%
-[  57,  62)   20   0.94%  73.72%
-[  62,  68)   32   1.50%  75.22%
-[  68,  73)   36   1.69%  76.91%
-[  73,  78)   40   1.88%  78.79%
-[  78,  83)   69   3.24%  82.03% #
-[  83,  89)  140   6.57%  88.60% #
-[  89,  94)  110   5.16%  93.76% #
-[  94,  99)   76   3.57%  97.33% #
-[  99, 104)   41   1.92%  99.25%
-[ 104, 109]   16   0.75% 100.00%
+[   5,  10) 1242  50.34%  50.34% ##########
+[  10,  15)  106   4.30%  54.64% #
+[  15,  20)   83   3.36%  58.01% #
+[  20,  25)   71   2.88%  60.88% #
+[  25,  30)   64   2.59%  63.48% #
+[  30,  35)   64   2.59%  66.07% #
+[  35,  41)  111   4.50%  70.57% #
+[  41,  46)   83   3.36%  73.94% #
+[  46,  51)   66   2.68%  76.61% #
+[  51,  56)   36   1.46%  78.07%
+[  56,  61)   40   1.62%  79.69%
+[  61,  66)   38   1.54%  81.23%
+[  66,  71)   53   2.15%  83.38%
+[  71,  77)   96   3.89%  87.27% #
+[  77,  82)  129   5.23%  92.50% #
+[  82,  87)   80   3.24%  95.74% #
+[  87,  92)   57   2.31%  98.05%
+[  92,  97)   34   1.38%  99.43%
+[  97, 102)   10   0.41%  99.84%
+[ 102, 107]    4   0.16% 100.00%
 
 Attribute in nodes:
-	581 : bill_length_mm [NUMERICAL]
-	361 : flipper_length_mm [NUMERICAL]
-	308 : bill_depth_mm [NUMERICAL]
-	300 : island [CATEGORICAL]
-	248 : body_mass_g [NUMERICAL]
-	21 : sex [CATEGORICAL]
-	12 : year [NUMERICAL]
+	678 : bill_length_mm [NUMERICAL]
+	442 : bill_depth_mm [NUMERICAL]
+	374 : flipper_length_mm [NUMERICAL]
+	314 : island [CATEGORICAL]
+	305 : body_mass_g [NUMERICAL]
+	29 : sex [CATEGORICAL]
+	25 : year [NUMERICAL]
 
 Attribute in nodes with depth <= 0:
-	162 : flipper_length_mm [NUMERICAL]
-	61 : bill_length_mm [NUMERICAL]
-	58 : bill_depth_mm [NUMERICAL]
-	12 : island [CATEGORICAL]
-	7 : body_mass_g [NUMERICAL]
+	153 : flipper_length_mm [NUMERICAL]
+	55 : bill_length_mm [NUMERICAL]
+	45 : island [CATEGORICAL]
+	42 : bill_depth_mm [NUMERICAL]
+	5 : body_mass_g [NUMERICAL]
 
 Attribute in nodes with depth <= 1:
-	244 : flipper_length_mm [NUMERICAL]
-	238 : bill_length_mm [NUMERICAL]
-	170 : bill_depth_mm [NUMERICAL]
-	143 : island [CATEGORICAL]
-	78 : body_mass_g [NUMERICAL]
-
-Attribute in nodes with depth <= 2:
-	411 : bill_length_mm [NUMERICAL]
-	326 : flipper_length_mm [NUMERICAL]
-	250 : island [CATEGORICAL]
-	242 : bill_depth_mm [NUMERICAL]
-	152 : body_mass_g [NUMERICAL]
-	5 : sex [CATEGORICAL]
+	234 : flipper_length_mm [NUMERICAL]
+	231 : bill_length_mm [NUMERICAL]
+	191 : island [CATEGORICAL]
+	164 : bill_depth_mm [NUMERICAL]
+	71 : body_mass_g [NUMERICAL]
 	1 : year [NUMERICAL]
 
+Attribute in nodes with depth <= 2:
+	457 : bill_length_mm [NUMERICAL]
+	307 : bill_depth_mm [NUMERICAL]
+	295 : flipper_length_mm [NUMERICAL]
+	276 : island [CATEGORICAL]
+	169 : body_mass_g [NUMERICAL]
+	8 : sex [CATEGORICAL]
+	4 : year [NUMERICAL]
+
 Attribute in nodes with depth <= 3:
-	546 : bill_length_mm [NUMERICAL]
-	354 : flipper_length_mm [NUMERICAL]
-	295 : island [CATEGORICAL]
-	291 : bill_depth_mm [NUMERICAL]
-	233 : body_mass_g [NUMERICAL]
-	16 : sex [CATEGORICAL]
-	9 : year [NUMERICAL]
+	610 : bill_length_mm [NUMERICAL]
+	403 : bill_depth_mm [NUMERICAL]
+	348 : flipper_length_mm [NUMERICAL]
+	307 : island [CATEGORICAL]
+	274 : body_mass_g [NUMERICAL]
+	26 : sex [CATEGORICAL]
+	10 : year [NUMERICAL]
 
 Attribute in nodes with depth <= 5:
-	580 : bill_length_mm [NUMERICAL]
-	361 : flipper_length_mm [NUMERICAL]
-	308 : bill_depth_mm [NUMERICAL]
-	300 : island [CATEGORICAL]
-	248 : body_mass_g [NUMERICAL]
-	21 : sex [CATEGORICAL]
-	12 : year [NUMERICAL]
+	678 : bill_length_mm [NUMERICAL]
+	441 : bill_depth_mm [NUMERICAL]
+	373 : flipper_length_mm [NUMERICAL]
+	314 : island [CATEGORICAL]
+	305 : body_mass_g [NUMERICAL]
+	29 : sex [CATEGORICAL]
+	24 : year [NUMERICAL]
 
 Condition type in nodes:
-	1510 : HigherCondition
-	321 : ContainsBitmapCondition
+	1824 : HigherCondition
+	343 : ContainsBitmapCondition
 Condition type in nodes with depth <= 0:
-	288 : HigherCondition
-	12 : ContainsBitmapCondition
+	255 : HigherCondition
+	45 : ContainsBitmapCondition
 Condition type in nodes with depth <= 1:
-	730 : HigherCondition
-	143 : ContainsBitmapCondition
+	701 : HigherCondition
+	191 : ContainsBitmapCondition
 Condition type in nodes with depth <= 2:
-	1132 : HigherCondition
-	255 : ContainsBitmapCondition
+	1232 : HigherCondition
+	284 : ContainsBitmapCondition
 Condition type in nodes with depth <= 3:
-	1433 : HigherCondition
-	311 : ContainsBitmapCondition
+	1645 : HigherCondition
+	333 : ContainsBitmapCondition
 Condition type in nodes with depth <= 5:
-	1509 : HigherCondition
-	321 : ContainsBitmapCondition
+	1821 : HigherCondition
+	343 : ContainsBitmapCondition
 Node format: NOT_SET
 
 Training OOB:
-	trees: 1, Out-of-bag evaluation: accuracy:0.94382 logloss:2.02492
-	trees: 11, Out-of-bag evaluation: accuracy:0.974026 logloss:0.507284
-	trees: 21, Out-of-bag evaluation: accuracy:0.978992 logloss:0.205003
-	trees: 31, Out-of-bag evaluation: accuracy:0.978992 logloss:0.213673
-	trees: 42, Out-of-bag evaluation: accuracy:0.97479 logloss:0.221349
-	trees: 52, Out-of-bag evaluation: accuracy:0.97479 logloss:0.0789149
-	trees: 62, Out-of-bag evaluation: accuracy:0.97479 logloss:0.0833298
-	trees: 73, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0825267
-	trees: 83, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0840707
-	trees: 93, Out-of-bag evaluation: accuracy:0.970588 logloss:0.081813
-	trees: 103, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0803573
-	trees: 113, Out-of-bag evaluation: accuracy:0.970588 logloss:0.081543
-	trees: 123, Out-of-bag evaluation: accuracy:0.97479 logloss:0.0811422
-	trees: 133, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0806071
-	trees: 143, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0810282
-	trees: 153, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0798571
-	trees: 164, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0798446
-	trees: 174, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0810177
-	trees: 184, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0807455
-	trees: 194, Out-of-bag evaluation: accuracy:0.962185 logloss:0.0816495
-	trees: 205, Out-of-bag evaluation: accuracy:0.962185 logloss:0.0815769
-	trees: 215, Out-of-bag evaluation: accuracy:0.962185 logloss:0.0814126
-	trees: 226, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0819398
-	trees: 236, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0808412
-	trees: 246, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0816298
-	trees: 258, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0801306
-	trees: 268, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0810539
-	trees: 278, Out-of-bag evaluation: accuracy:0.966387 logloss:0.0804086
-	trees: 288, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0806902
-	trees: 298, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0808522
-	trees: 300, Out-of-bag evaluation: accuracy:0.970588 logloss:0.0807255
+	trees: 1, Out-of-bag evaluation: accuracy:0.910112 logloss:3.23988
+	trees: 12, Out-of-bag evaluation: accuracy:0.943231 logloss:1.30503
+	trees: 23, Out-of-bag evaluation: accuracy:0.953192 logloss:0.394233
+	trees: 35, Out-of-bag evaluation: accuracy:0.965957 logloss:0.390056
+	trees: 45, Out-of-bag evaluation: accuracy:0.970213 logloss:0.241466
+	trees: 56, Out-of-bag evaluation: accuracy:0.970213 logloss:0.240155
+	trees: 68, Out-of-bag evaluation: accuracy:0.970213 logloss:0.240307
+	trees: 80, Out-of-bag evaluation: accuracy:0.970213 logloss:0.240302
+	trees: 90, Out-of-bag evaluation: accuracy:0.970213 logloss:0.0997129
+	trees: 100, Out-of-bag evaluation: accuracy:0.978723 logloss:0.0949417
+	trees: 110, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0953088
+	trees: 122, Out-of-bag evaluation: accuracy:0.974468 logloss:0.096616
+	trees: 132, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0966673
+	trees: 142, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0968194
+	trees: 152, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0967422
+	trees: 163, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0952728
+	trees: 175, Out-of-bag evaluation: accuracy:0.970213 logloss:0.0952571
+	trees: 185, Out-of-bag evaluation: accuracy:0.970213 logloss:0.095572
+	trees: 195, Out-of-bag evaluation: accuracy:0.970213 logloss:0.0959348
+	trees: 206, Out-of-bag evaluation: accuracy:0.970213 logloss:0.0964578
+	trees: 216, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0959382
+	trees: 226, Out-of-bag evaluation: accuracy:0.978723 logloss:0.096229
+	trees: 237, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0973237
+	trees: 249, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0985853
+	trees: 260, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0982098
+	trees: 271, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0980791
+	trees: 281, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0984111
+	trees: 291, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0987725
+	trees: 300, Out-of-bag evaluation: accuracy:0.974468 logloss:0.0994343
 #+end_example
 
 * Using make_inspector
@@ -666,32 +603,32 @@ model_1.make_inspector().variable_importances()
 
 #+RESULTS:
 #+begin_example
-'("INV_MEAN_MIN_DEPTH": (("flipper_length_mm" (1; #4)  0.4607944180502756)
-  ("bill_length_mm" (1; #2)  0.41861736247224274)
-  ("island" (4; #5)  0.3253657302913541)
-  ("bill_depth_mm" (1; #1)  0.3223507447441827)
-  ("body_mass_g" (1; #3)  0.2776956689681037)
-  ("sex" (4; #6)  0.24672208717957894)
-  ("year" (1; #7)  0.2462169890865783))
- "SUM_SCORE": (("flipper_length_mm" (1; #4)  25283.701343668625)
-  ("bill_length_mm" (1; #2)  22842.22247208655)
-  ("bill_depth_mm" (1; #1)  10507.301315845922)
-  ("island" (4; #5)  10015.296502709389)
-  ("body_mass_g" (1; #3)  2758.581479271874)
-  ("sex" (4; #6)  128.27838116884232)
-  ("year" (1; #7)  21.255580220371485))
- "NUM_AS_ROOT": (("flipper_length_mm" (1; #4)  162.0)
-  ("bill_length_mm" (1; #2)  61.0)
-  ("bill_depth_mm" (1; #1)  58.0)
-  ("island" (4; #5)  12.0)
-  ("body_mass_g" (1; #3)  7.0))
- "NUM_NODES": (("bill_length_mm" (1; #2)  581.0)
-  ("flipper_length_mm" (1; #4)  361.0)
-  ("bill_depth_mm" (1; #1)  308.0)
-  ("island" (4; #5)  300.0)
-  ("body_mass_g" (1; #3)  248.0)
-  ("sex" (4; #6)  21.0)
-  ("year" (1; #7)  12.0)))
+'("NUM_AS_ROOT": (("flipper_length_mm" (1; #4)  153.0)
+  ("bill_length_mm" (1; #2)  55.0)
+  ("island" (4; #5)  45.0)
+  ("bill_depth_mm" (1; #1)  42.0)
+  ("body_mass_g" (1; #3)  5.0))
+ "SUM_SCORE": (("bill_length_mm" (1; #2)  23086.665044510737)
+  ("flipper_length_mm" (1; #4)  22279.785376295447)
+  ("island" (4; #5)  12917.421690158546)
+  ("bill_depth_mm" (1; #1)  9287.342406939715)
+  ("body_mass_g" (1; #3)  3417.259438963607)
+  ("sex" (4; #6)  207.27511917054653)
+  ("year" (1; #7)  70.3259641379118))
+ "INV_MEAN_MIN_DEPTH": (("flipper_length_mm" (1; #4)  0.42644681553242786)
+  ("bill_length_mm" (1; #2)  0.40991152011228976)
+  ("island" (4; #5)  0.32795446212687934)
+  ("bill_depth_mm" (1; #1)  0.3028375303457658)
+  ("body_mass_g" (1; #3)  0.2653179954885292)
+  ("sex" (4; #6)  0.233727719348659)
+  ("year" (1; #7)  0.23317794025648098))
+ "NUM_NODES": (("bill_length_mm" (1; #2)  678.0)
+  ("bill_depth_mm" (1; #1)  442.0)
+  ("flipper_length_mm" (1; #4)  374.0)
+  ("island" (4; #5)  314.0)
+  ("body_mass_g" (1; #3)  305.0)
+  ("sex" (4; #6)  29.0)
+  ("year" (1; #7)  25.0)))
 #+end_example
 
 * Model self evaluation
@@ -701,7 +638,7 @@ model_1.make_inspector().evaluation()
 #+end_src
 
 #+RESULTS:
-: Evaluation(num_examples=238, accuracy=0.9705882352941176, loss=0.08072551451975621, rmse=None, ndcg=None, aucs=None, auuc=None, qini=None)
+: Evaluation(num_examples=235, accuracy=0.9744680851063829, loss=0.09943434574264795, rmse=None, ndcg=None, aucs=None, auuc=None, qini=None)
 
 * Plotting the training logs
 
@@ -710,7 +647,7 @@ model_1.make_inspector().training_logs()
 #+end_src
 
 #+RESULTS:
-| TrainLog | (num_trees=1 evaluation=Evaluation (num_examples=89 accuracy=0.9438202247191011 loss=2.024924246112952 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=11 evaluation=Evaluation (num_examples=231 accuracy=0.974025974025974 loss=0.5072843720128526 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=21 evaluation=Evaluation (num_examples=238 accuracy=0.9789915966386554 loss=0.20500335053485982 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=31 evaluation=Evaluation (num_examples=238 accuracy=0.9789915966386554 loss=0.2136732013348271 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=42 evaluation=Evaluation (num_examples=238 accuracy=0.9747899159663865 loss=0.22134864386640676 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=52 evaluation=Evaluation (num_examples=238 accuracy=0.9747899159663865 loss=0.07891491836547351 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=62 evaluation=Evaluation (num_examples=238 accuracy=0.9747899159663865 loss=0.08332977528456881 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=73 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.0825267160984398 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=83 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08407070942442207 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=93 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08181299080586985 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=103 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.0803573342948025 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=113 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08154300891426432 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=123 evaluation=Evaluation (num_examples=238 accuracy=0.9747899159663865 loss=0.08114221335208717 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=133 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08060714445162971 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=143 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08102817467155576 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=153 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.07985711353635337 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=164 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.07984463946439889 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=174 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08101768196881318 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=184 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08074553841490205 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=194 evaluation=Evaluation (num_examples=238 accuracy=0.9621848739495799 loss=0.08164954702409 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=205 evaluation=Evaluation (num_examples=238 accuracy=0.9621848739495799 loss=0.08157687832624848 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=215 evaluation=Evaluation (num_examples=238 accuracy=0.9621848739495799 loss=0.08141256028301075 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=226 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08193979696801104 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=236 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08084117294829182 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=246 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08162979342575584 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=258 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08013064362609587 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=268 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08105392032498572 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=278 evaluation=Evaluation (num_examples=238 accuracy=0.9663865546218487 loss=0.08040858069121712 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=288 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08069018520680922 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=298 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08085222504915622 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=300 evaluation=Evaluation (num_examples=238 accuracy=0.9705882352941176 loss=0.08072551451975621 rmse=None ndcg=None aucs=None auuc=None qini=None)) |
+| TrainLog | (num_trees=1 evaluation=Evaluation (num_examples=89 accuracy=0.9101123595505618 loss=3.2398787937807234 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=12 evaluation=Evaluation (num_examples=229 accuracy=0.9432314410480349 loss=1.3050296110747683 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=23 evaluation=Evaluation (num_examples=235 accuracy=0.9531914893617022 loss=0.39423320943370777 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=35 evaluation=Evaluation (num_examples=235 accuracy=0.9659574468085106 loss=0.3900564617616065 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=45 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.24146640841314132 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=56 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.24015527456364733 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=68 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.24030704718637974 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=80 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.24030178147269057 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=90 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.09971290459024146 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=100 evaluation=Evaluation (num_examples=235 accuracy=0.9787234042553191 loss=0.09494173875514497 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=110 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.0953087846015362 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=122 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09661599706779135 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=132 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09666731662731222 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=142 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09681942925808278 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=152 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09674216249680266 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=163 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.095272810959277 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=175 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.0952570849672911 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=185 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.09557198714068596 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=195 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.09593477687065272 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=206 evaluation=Evaluation (num_examples=235 accuracy=0.9702127659574468 loss=0.09645782659186962 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=216 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09593824128362727 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=226 evaluation=Evaluation (num_examples=235 accuracy=0.9787234042553191 loss=0.09622902777045965 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=237 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.0973236724615414 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=249 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.0985852888488072 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=260 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09820979333859174 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=271 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09807908718890332 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=281 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.0984111214056611 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=291 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09877253035281566 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=300 evaluation=Evaluation (num_examples=235 accuracy=0.9744680851063829 loss=0.09943434574264795 rmse=None ndcg=None aucs=None auuc=None qini=None)) |
 
 #+begin_src jupyter-python
 import matplotlib.pyplot as plt
@@ -733,7 +670,7 @@ plt.show()
 #+end_src
 
 #+RESULTS:
-[[file:./.ob-jupyter/2a3235c18ce97fc5c539f41ea4e6599d591136c0.png]]
+[[file:./.ob-jupyter/85c2eae1ddaca27ae61ca502e5a0d500a1387342.png]]
 
 
 * Retrain model with different learning algorithm
@@ -769,23 +706,23 @@ print(model_2.evaluate(test_ds, return_dict=True))
 
 #+RESULTS:
 #+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi3icvcuv as temporary training directory
+Use /var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmp1gfgsesw as temporary training directory
 Reading training dataset...
-Training dataset read in 0:00:00.078017. Found 238 examples.
+Training dataset read in 0:00:00.066490. Found 235 examples.
 Reading validation dataset...
-Num validation examples: tf.Tensor(106, shape=(), dtype=int32)
-Validation dataset read in 0:00:00.101093. Found 106 examples.
+Num validation examples: tf.Tensor(109, shape=(), dtype=int32)
+Validation dataset read in 0:00:00.090159. Found 109 examples.
 Training model...
-[WARNING 23-05-18 15:29:22.4573 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-18 15:29:22.4574 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-18 15:29:22.4574 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Model trained in 0:00:00.033334
+[WARNING 23-05-19 17:23:58.0331 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
+[WARNING 23-05-19 17:23:58.0331 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
+[WARNING 23-05-19 17:23:58.0331 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
+Model trained in 0:00:00.097217
 Compiling model...
 Model compiled.
-1/1 [==============================] - 0s 47ms/step - loss: 0.0000e+00 - accuracy: 0.9623
-{'loss': 0.0, 'accuracy': 0.9622641801834106}
-[INFO 23-05-18 15:29:22.6806 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi3icvcuv/model/ with prefix 30776091c14d4de6
-[INFO 23-05-18 15:29:22.6824 CDT decision_forest.cc:660] Model loaded with 33 root(s), 913 node(s), and 2 input feature(s).
-[INFO 23-05-18 15:29:22.6824 CDT abstract_model.cc:1312] Engine "GradientBoostedTreesGeneric" built
-[INFO 23-05-18 15:29:22.6824 CDT kernel.cc:1074] Use fast generic engine
+1/1 [==============================] - 0s 48ms/step - loss: 0.0000e+00 - accuracy: 0.9817
+{'loss': 0.0, 'accuracy': 0.9816513657569885}
+[INFO 23-05-19 17:23:58.2883 CDT kernel.cc:1242] Loading model from path /var/folders/41/4m81f87d31bdzxy69f3rzd1c0000gn/T/tmp1gfgsesw/model/ with prefix dabcb66459274b14
+[INFO 23-05-19 17:23:58.2954 CDT decision_forest.cc:660] Model loaded with 168 root(s), 5282 node(s), and 2 input feature(s).
+[INFO 23-05-19 17:23:58.2954 CDT abstract_model.cc:1312] Engine "GradientBoostedTreesGeneric" built
+[INFO 23-05-19 17:23:58.2954 CDT kernel.cc:1074] Use fast generic engine
 #+end_example
