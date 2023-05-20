@@ -1502,3 +1502,290 @@ print(tfdf.keras.GradientBoostedTreesModel.predefined_hyperparameters())
 : [HyperParameterTemplate(name='better_default', version=1, parameters={'growing_strategy': 'BEST_FIRST_GLOBAL'}, description='A configuration that is generally better than the default parameters without being more expensive.'), HyperParameterTemplate(name='benchmark_rank1', version=1, parameters={'growing_strategy': 'BEST_FIRST_GLOBAL', 'categorical_algorithm': 'RANDOM', 'split_axis': 'SPARSE_OBLIQUE', 'sparse_oblique_normalization': 'MIN_MAX', 'sparse_oblique_num_projections_exponent': 1.0}, description='Top ranking hyper-parameters on our benchmark slightly modified to run in reasonable time.')]
 
 What is returned are the predefined hyper-parameters of the Gradient Boosted Tree model.
+
+* Feature Preprocessing
+
+Pre-processing features is sometimes necessary to consume signals with complex structures, to regularize the model or to apply transfer learning. Pre-processing can be done in one of three ways:
+
+1. *Preprocessing on the pandas dataframe*: This solution is easy tto implement and generally suitable for experiementation. However, the pre-processing logic will not be exported in the model by model.save()
+2. *Keras Preprocessing*: While more complex than the previous solution, Keras Preprocessing is packaged in the model.
+3. *TensorFlow Feature Columns*: This API is part of the TF Estimator library (!= Keras) and planned for deprecation. This solution is interesting when using existing preprocessing code.
+
+
+*Note*: Using *TensorFlow Hub* pre-trained embedding is often, a great way to consume text and image with TF-DF.
+
+In the next example, pre-process the body_mass_g feature into body_mass_kg = body_mass_g / 1000. The bill_length_mm is consumed without preprocessing. Note that such monotonic transformations have generally no impact on decision forest models.
+
+#+begin_src jupyter-python
+body_mass_g = tf.keras.layers.Input(shape=(1,), name="body_mass_g")
+body_mass_kg = body_mass_g / 1000.0
+
+bill_length_mm = tf.keras.layers.Input(shape=(1,), name="bill_length_mm")
+
+raw_inputs = {"body_mass_g": body_mass_g, "bill_length_mm": bill_length_mm}
+processed_inputs = {"body_mass_kg": body_mass_kg, "bill_length_mm": bill_length_mm}
+
+# "preprocessor" contains the preprocessing logic.
+preprocessor = tf.keras.Model(inputs=raw_inputs, outputs=processed_inputs)
+
+# "model_4" contains both the pre-processing logic and the decision forest.
+model_4 = tfdf.keras.RandomForestModel(preprocessing=preprocessor)
+model_4.fit(train_ds)
+
+model_4.summary()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp5qt2gv_n as temporary training directory
+Reading training dataset...
+Training dataset read in 0:00:00.071157. Found 221 examples.
+Training model...
+Model trained in 0:00:00.021076
+Compiling model...
+Model compiled.
+Model: "random_forest_model_2"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #
+=================================================================
+ model_1 (Functional)        {'body_mass_kg': (None,   0
+                             1),
+                              'bill_length_mm': (None
+                             , 1)}
+
+=================================================================
+Total params: 1
+Trainable params: 0
+Non-trainable params: 1
+_________________________________________________________________
+Type: "RANDOM_FOREST"
+Task: CLASSIFICATION
+Label: "__LABEL"
+
+Input Features (2):
+	bill_length_mm
+	body_mass_kg
+
+No weights
+
+Variable Importance: INV_MEAN_MIN_DEPTH:
+    1. "bill_length_mm"  0.824627 ################
+    2.   "body_mass_kg"  0.492691
+
+Variable Importance: NUM_AS_ROOT:
+    1. "bill_length_mm" 247.000000 ################
+    2.   "body_mass_kg" 53.000000
+
+Variable Importance: NUM_NODES:
+    1. "bill_length_mm" 1420.000000 ################
+    2.   "body_mass_kg" 1207.000000
+
+Variable Importance: SUM_SCORE:
+    1. "bill_length_mm" 38320.613726 ################
+    2.   "body_mass_kg" 26165.805214
+
+
+
+Winner takes all: true
+Out-of-bag evaluation: accuracy:0.932127 logloss:0.499816
+Number of trees: 300
+Total number of nodes: 5554
+
+Number of nodes by tree:
+Count: 300 Average: 18.5133 StdDev: 2.81244
+Min: 11 Max: 25 Ignored: 0
+----------------------------------------------
+[ 11, 12)  2   0.67%   0.67%
+[ 12, 13)  0   0.00%   0.67%
+[ 13, 14) 14   4.67%   5.33% ##
+[ 14, 15)  0   0.00%   5.33%
+[ 15, 16) 42  14.00%  19.33% #####
+[ 16, 17)  0   0.00%  19.33%
+[ 17, 18) 70  23.33%  42.67% #########
+[ 18, 19)  0   0.00%  42.67%
+[ 19, 20) 78  26.00%  68.67% ##########
+[ 20, 21)  0   0.00%  68.67%
+[ 21, 22) 62  20.67%  89.33% ########
+[ 22, 23)  0   0.00%  89.33%
+[ 23, 24) 27   9.00%  98.33% ###
+[ 24, 25)  0   0.00%  98.33%
+[ 25, 25]  5   1.67% 100.00% #
+
+Depth by leafs:
+Count: 2927 Average: 3.75026 StdDev: 1.22975
+Min: 1 Max: 8 Ignored: 0
+----------------------------------------------
+[ 1, 2)  30   1.02%   1.02%
+[ 2, 3) 393  13.43%  14.45% ####
+[ 3, 4) 943  32.22%  46.67% ##########
+[ 4, 5) 788  26.92%  73.59% ########
+[ 5, 6) 505  17.25%  90.84% #####
+[ 6, 7) 227   7.76%  98.60% ##
+[ 7, 8)  35   1.20%  99.80%
+[ 8, 8]   6   0.20% 100.00%
+
+Number of training obs by leaf:
+Count: 2927 Average: 22.6512 StdDev: 26.2925
+Min: 5 Max: 96 Ignored: 0
+----------------------------------------------
+[  5,  9) 1704  58.22%  58.22% ##########
+[  9, 14)  302  10.32%  68.53% ##
+[ 14, 18)   20   0.68%  69.22%
+[ 18, 23)    9   0.31%  69.53%
+[ 23, 28)   33   1.13%  70.65%
+[ 28, 32)   72   2.46%  73.11%
+[ 32, 37)   89   3.04%  76.15% #
+[ 37, 41)   61   2.08%  78.24%
+[ 41, 46)   31   1.06%  79.30%
+[ 46, 51)   10   0.34%  79.64%
+[ 51, 55)    6   0.20%  79.84%
+[ 55, 60)   32   1.09%  80.94%
+[ 60, 64)   53   1.81%  82.75%
+[ 64, 69)  136   4.65%  87.39% #
+[ 69, 74)  149   5.09%  92.48% #
+[ 74, 78)  102   3.48%  95.97% #
+[ 78, 83)   65   2.22%  98.19%
+[ 83, 87)   29   0.99%  99.18%
+[ 87, 92)   16   0.55%  99.73%
+[ 92, 96]    8   0.27% 100.00%
+
+Attribute in nodes:
+	1420 : bill_length_mm [NUMERICAL]
+	1207 : body_mass_kg [NUMERICAL]
+
+Attribute in nodes with depth <= 0:
+	247 : bill_length_mm [NUMERICAL]
+	53 : body_mass_kg [NUMERICAL]
+
+Attribute in nodes with depth <= 1:
+	450 : bill_length_mm [NUMERICAL]
+	420 : body_mass_kg [NUMERICAL]
+
+Attribute in nodes with depth <= 2:
+	841 : bill_length_mm [NUMERICAL]
+	776 : body_mass_kg [NUMERICAL]
+
+Attribute in nodes with depth <= 3:
+	1138 : bill_length_mm [NUMERICAL]
+	1030 : body_mass_kg [NUMERICAL]
+
+Attribute in nodes with depth <= 5:
+	1406 : bill_length_mm [NUMERICAL]
+	1199 : body_mass_kg [NUMERICAL]
+
+Condition type in nodes:
+	2627 : HigherCondition
+Condition type in nodes with depth <= 0:
+	300 : HigherCondition
+Condition type in nodes with depth <= 1:
+	870 : HigherCondition
+Condition type in nodes with depth <= 2:
+	1617 : HigherCondition
+Condition type in nodes with depth <= 3:
+	2168 : HigherCondition
+Condition type in nodes with depth <= 5:
+	2605 : HigherCondition
+Node format: NOT_SET
+
+Training OOB:
+	trees: 1, Out-of-bag evaluation: accuracy:0.922222 logloss:2.8034
+	trees: 13, Out-of-bag evaluation: accuracy:0.918182 logloss:2.34765
+	trees: 24, Out-of-bag evaluation: accuracy:0.927602 logloss:1.39757
+	trees: 35, Out-of-bag evaluation: accuracy:0.923077 logloss:0.797359
+	trees: 46, Out-of-bag evaluation: accuracy:0.914027 logloss:0.655226
+	trees: 59, Out-of-bag evaluation: accuracy:0.923077 logloss:0.650069
+	trees: 69, Out-of-bag evaluation: accuracy:0.927602 logloss:0.652402
+	trees: 79, Out-of-bag evaluation: accuracy:0.927602 logloss:0.65416
+	trees: 93, Out-of-bag evaluation: accuracy:0.927602 logloss:0.651294
+	trees: 105, Out-of-bag evaluation: accuracy:0.927602 logloss:0.503865
+	trees: 117, Out-of-bag evaluation: accuracy:0.927602 logloss:0.507055
+	trees: 127, Out-of-bag evaluation: accuracy:0.932127 logloss:0.504138
+	trees: 138, Out-of-bag evaluation: accuracy:0.936652 logloss:0.504318
+	trees: 150, Out-of-bag evaluation: accuracy:0.932127 logloss:0.50369
+	trees: 160, Out-of-bag evaluation: accuracy:0.932127 logloss:0.502773
+	trees: 171, Out-of-bag evaluation: accuracy:0.927602 logloss:0.502715
+	trees: 181, Out-of-bag evaluation: accuracy:0.932127 logloss:0.504017
+	trees: 191, Out-of-bag evaluation: accuracy:0.932127 logloss:0.505018
+	trees: 201, Out-of-bag evaluation: accuracy:0.936652 logloss:0.505277
+	trees: 212, Out-of-bag evaluation: accuracy:0.936652 logloss:0.503043
+	trees: 224, Out-of-bag evaluation: accuracy:0.932127 logloss:0.504575
+	trees: 234, Out-of-bag evaluation: accuracy:0.932127 logloss:0.503492
+	trees: 244, Out-of-bag evaluation: accuracy:0.932127 logloss:0.504773
+	trees: 255, Out-of-bag evaluation: accuracy:0.932127 logloss:0.501382
+	trees: 265, Out-of-bag evaluation: accuracy:0.932127 logloss:0.502314
+	trees: 276, Out-of-bag evaluation: accuracy:0.932127 logloss:0.503706
+	trees: 286, Out-of-bag evaluation: accuracy:0.932127 logloss:0.503061
+	trees: 297, Out-of-bag evaluation: accuracy:0.932127 logloss:0.499857
+	trees: 300, Out-of-bag evaluation: accuracy:0.932127 logloss:0.499816
+/Users/umbertofasci/miniforge3/envs/tensorflow-metal/lib/python3.9/site-packages/keras/engine/functional.py:639: UserWarning: Input dict contained keys ['island', 'bill_depth_mm', 'flipper_length_mm', 'sex', 'year'] which did not match any model input. They will be ignored by the model.
+  inputs = self._flatten_to_reference_inputs(inputs)
+[INFO 23-05-20 17:14:29.1862 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp5qt2gv_n/model/ with prefix acb08115a29e4797
+[INFO 23-05-20 17:14:29.1931 CDT decision_forest.cc:660] Model loaded with 300 root(s), 5554 node(s), and 2 input feature(s).
+[INFO 23-05-20 17:14:29.1931 CDT abstract_model.cc:1312] Engine "RandomForestGeneric" built
+[INFO 23-05-20 17:14:29.1931 CDT kernel.cc:1074] Use fast generic engine
+#+end_example
+
+The following example re-implements the same logic using TensorFlow Feature Columns.
+
+#+begin_src jupyter-python
+def g_to_kg(x):
+    return x / 1000
+
+feature_columns = [
+    tf.feature_column.numeric_column("body_mass_g", normalizer_fn=g_to_kg),
+    tf.feature_column.numeric_column("bill_length_mm"),
+]
+
+preprocessing = tf.keras.layers.DenseFeatures(feature_columns)
+
+model_5 = tfdf.keras.RandomForestModel(preprocessing=preprocessing)
+model_5.fit(train_ds)
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+#+begin_example
+WARNING:tensorflow:From /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/ipykernel_28177/3447023075.py:5: numeric_column (from tensorflow.python.feature_column.feature_column_v2) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use Keras preprocessing layers instead, either directly or via the `tf.keras.utils.FeatureSpace` utility. Each of `tf.feature_column.*` has a functional equivalent in `tf.keras.layers` for feature preprocessing when training a Keras model.
+WARNING:tensorflow:From /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/ipykernel_28177/3447023075.py:5: numeric_column (from tensorflow.python.feature_column.feature_column_v2) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use Keras preprocessing layers instead, either directly or via the `tf.keras.utils.FeatureSpace` utility. Each of `tf.feature_column.*` has a functional equivalent in `tf.keras.layers` for feature preprocessing when training a Keras model.
+Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3h5ibs6r as temporary training directory
+Reading training dataset...
+Training dataset read in 0:00:00.193870. Found 221 examples.
+Training model...
+Model trained in 0:00:00.021729
+Compiling model...
+Model compiled.
+[INFO 23-05-20 17:20:56.5049 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp3h5ibs6r/model/ with prefix 4046ab6b2e5e404f
+[INFO 23-05-20 17:20:56.5121 CDT decision_forest.cc:660] Model loaded with 300 root(s), 5554 node(s), and 2 input feature(s).
+[INFO 23-05-20 17:20:56.5121 CDT abstract_model.cc:1312] Engine "RandomForestGeneric" built
+[INFO 23-05-20 17:20:56.5121 CDT kernel.cc:1074] Use fast generic engine
+#+end_example
+: <keras.callbacks.History at 0x15a7efe80>
+:END:
+
+* Training a regression model
+
+The previous example trains a classification model(TF-DF does not differentiate between binary classification and multi-class classification). In the next example, train a regression model on the Abalone dataset. The objective of this dataset is to predict the number of rings on a shell of a abalone.
+
+*Note*: The csv file is assembled by appending UCI's header and data files. No preprocessing was applied.
+
+#+begin_src jupyter-python
+!wget -q https://storage.googleapis.com/download.tensorflow.org/data/abalone_raw.csv -O /tmp/abalone.csv
+
+dataset_df = pd.read_csv("/tmp/abalone.csv")
+print(dataset_df.head(3))
+#+end_src
+
+#+RESULTS:
+:   Type  LongestShell  Diameter  Height  WholeWeight  ShuckedWeight
+: 0    M         0.455     0.365   0.095       0.5140         0.2245  \
+: 1    M         0.350     0.265   0.090       0.2255         0.0995
+: 2    F         0.530     0.420   0.135       0.6770         0.2565
+:
+:    VisceraWeight  ShellWeight  Rings
+: 0         0.1010         0.15     15
+: 1         0.0485         0.07      7
+: 2         0.1415         0.21      9
