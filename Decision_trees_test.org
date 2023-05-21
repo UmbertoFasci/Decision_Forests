@@ -27,7 +27,7 @@ import math
 
 #+RESULTS:
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 print("Found TensorFlow Decision Forests v" + tfdf.__version__)
 #+end_src
 
@@ -36,7 +36,7 @@ print("Found TensorFlow Decision Forests v" + tfdf.__version__)
 
 * Training a Random Forest model
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # Download the dataset
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/palmer_penguins/penguins.csv -O /tmp/penguins.csv
 
@@ -58,7 +58,7 @@ dataset_df.head(3)
 : 1       3800.0  female  2007
 : 2       3250.0  female  2007
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 label = "species"
 
 classes = dataset_df[label].unique().tolist()
@@ -71,7 +71,7 @@ dataset_df[label] = dataset_df[label].map(classes.index)
 : Label classes: ['Adelie', 'Gentoo', 'Chinstrap']
 
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 def split_dataset(dataset, test_ratio=0.30):
     test_indices = np.random.rand(len(dataset)) < test_ratio
     return dataset[~test_indices], dataset[test_indices]
@@ -84,7 +84,7 @@ print("{} examples in training, {} examples for testing.".format(
 #+RESULTS:
 : 244 examples in training, 100 examples for testing.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label)
 test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
 #+end_src
@@ -92,7 +92,7 @@ test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
 #+RESULTS:
 : Metal device set to: Apple M1
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # Specify the model
 model_1 = tfdf.keras.RandomForestModel(verbose=2)
 
@@ -319,7 +319,7 @@ Model compiled.
 
 * Evaluate the model
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.compile(metrics=["accuracy"])
 evaluation = model_1.evaluate(test_ds, return_dict=True)
 print()
@@ -339,7 +339,7 @@ for name, value in evaluation.items():
 
 * TensorFlow Serving
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.save("/tmp/my_saved_model")
 #+end_src
 
@@ -350,7 +350,7 @@ model_1.save("/tmp/my_saved_model")
 
 * Model structure and feature importance
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.summary()
 #+end_src
 
@@ -589,7 +589,7 @@ Training OOB:
 
 * Using make_inspector
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.make_inspector().features()
 #+end_src
 
@@ -602,7 +602,7 @@ model_1.make_inspector().features()
 :  "sex" (4; #6)
 :  "year" (1; #7))
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.make_inspector().variable_importances()
 #+end_src
 
@@ -638,7 +638,7 @@ model_1.make_inspector().variable_importances()
 
 * Model self evaluation
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.make_inspector().evaluation()
 #+end_src
 
@@ -647,7 +647,7 @@ model_1.make_inspector().evaluation()
 
 * Plotting the training logs
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_1.make_inspector().training_logs()
 #+end_src
 
@@ -680,7 +680,7 @@ plt.show()
 * Retrain model with different learning algorithm
 
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 tfdf.keras.get_all_models()
 #+end_src
 
@@ -690,7 +690,7 @@ tfdf.keras.get_all_models()
 
 * Using a subset of features
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 feature_1 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_2 = tfdf.keras.FeatureUsage(name="island")
 
@@ -748,7 +748,7 @@ Model compiled.
 
 In some cases, the inferred semantics is incorrect. For example: An Enum stored as an integer is semantically categorical, but it will be detected as numerical. In this case, you should specify the semantic argument in the input. The education_num field of the Adult dataset is a classic example.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 feature_1 = tfdf.keras.FeatureUsage(name="year", semantic=tfdf.keras.FeatureSemantic.CATEGORICAL)
 feature_2 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_3 = tfdf.keras.FeatureUsage(name="sex")
@@ -792,7 +792,7 @@ Note that ~year~ is in the list of CATEGORICAL features (unlike the first run)
 
 *I will figure out how to obtain that list without the question mark command.*
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # A classical but slightly more complex model.
 model_6 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500, growing_strategy="BEST_FIRST_GLOBAL", max_depth=8)
@@ -821,7 +821,7 @@ Model compiled.
 : <keras.callbacks.History at 0x15703c340>
 :END:
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 model_6.summary()
 #+end_src
 
@@ -1016,7 +1016,7 @@ Number of iteration to final model: 29
 	Iter:36 train-loss:0.009349 valid-loss:0.120652  train-accuracy:1.000000 valid-accuracy:0.965517
 #+end_example
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # A more complex, but possibly, more accurate model.
 model_7 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500,
@@ -1058,7 +1058,7 @@ As new training methods are published and implemented, combinations of hyper-par
 
 For example, the benchmark_rank1 template is the best combination on our internal benchmarks. Those templates are versioned to allow training configuration stability e.g. benchmark_rank1@v1.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # A good template of hyper-parameters.
 model_8 = tfdf.keras.GradientBoostedTreesModel(hyperparameter_template="benchmark_rank1")
 model_8.fit(train_ds)
@@ -1091,7 +1091,7 @@ Model compiled.
 
 The available templates are available with ~predefined_hyperparameters~. Note that different learning algorithms have different templates, even if the name is similar.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 print(tfdf.keras.GradientBoostedTreesModel.predefined_hyperparameters())
 #+end_src
 
@@ -1113,7 +1113,7 @@ Pre-processing features is sometimes necessary to consume signals with complex s
 
 In the next example, pre-process the body_mass_g feature into body_mass_kg = body_mass_g / 1000. The bill_length_mm is consumed without preprocessing. Note that such monotonic transformations have generally no impact on decision forest models.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 body_mass_g = tf.keras.layers.Input(shape=(1,), name="body_mass_g")
 body_mass_kg = body_mass_g / 1000.0
 
@@ -1332,7 +1332,7 @@ Training OOB:
 
 The following example re-implements the same logic using TensorFlow Feature Columns.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 def g_to_kg(x):
     return x / 1000
 
@@ -1379,7 +1379,7 @@ The previous example trains a classification model(TF-DF does not differentiate 
 
 *Note*: The csv file is assembled by appending UCI's header and data files. No preprocessing was applied.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/abalone_raw.csv -O /tmp/abalone.csv
 
 dataset_df = pd.read_csv("/tmp/abalone.csv")
@@ -1397,7 +1397,7 @@ print(dataset_df.head(3))
 : 1         0.0485         0.07      7
 : 2         0.1415         0.21      9
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # Split the dataset into a training and testing dataset.
 train_ds_pd, test_ds_pd = split_dataset(dataset_df)
 print("{} examples in training, {} examples for testing.".format(
@@ -1413,7 +1413,7 @@ test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label, task=tf
 #+RESULTS:
 : 2848 examples in training, 1329 examples for testing.
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # Configure the model
 model_7 = tfdf.keras.RandomForestModel(task = tfdf.keras.Task.REGRESSION)
 
@@ -1439,7 +1439,7 @@ Model compiled.
 : <keras.callbacks.History at 0x16bc1d3a0>
 :END:
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :exports results
 # Evaluate the model on the test dataset
 model_7.compile(metrics=["mse"])
 evaluation = model_7.evaluate(test_ds, return_dict=True)
