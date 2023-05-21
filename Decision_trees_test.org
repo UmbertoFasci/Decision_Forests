@@ -25,18 +25,13 @@ import tensorflow as tf
 import math
 #+end_src
 
-#+RESULTS:
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 print("Found TensorFlow Decision Forests v" + tfdf.__version__)
 #+end_src
 
-#+RESULTS:
-: Found TensorFlow Decision Forests v1.3.0
-
 * Training a Random Forest model
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # Download the dataset
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/palmer_penguins/penguins.csv -O /tmp/penguins.csv
 
@@ -47,18 +42,7 @@ dataset_df = pd.read_csv("/tmp/penguins.csv")
 dataset_df.head(3)
 #+end_src
 
-#+RESULTS:
-:   species     island  bill_length_mm  bill_depth_mm  flipper_length_mm
-: 0  Adelie  Torgersen            39.1           18.7              181.0  \
-: 1  Adelie  Torgersen            39.5           17.4              186.0
-: 2  Adelie  Torgersen            40.3           18.0              195.0
-:
-:    body_mass_g     sex  year
-: 0       3750.0    male  2007
-: 1       3800.0  female  2007
-: 2       3250.0  female  2007
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 label = "species"
 
 classes = dataset_df[label].unique().tolist()
@@ -67,11 +51,8 @@ print(f"Label classes: {classes}")
 dataset_df[label] = dataset_df[label].map(classes.index)
 #+end_src
 
-#+RESULTS:
-: Label classes: ['Adelie', 'Gentoo', 'Chinstrap']
 
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 def split_dataset(dataset, test_ratio=0.30):
     test_indices = np.random.rand(len(dataset)) < test_ratio
     return dataset[~test_indices], dataset[test_indices]
@@ -81,17 +62,12 @@ print("{} examples in training, {} examples for testing.".format(
     len(train_ds_pd), len(test_ds_pd)))
 #+end_src
 
-#+RESULTS:
-: 230 examples in training, 114 examples for testing.
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label)
 test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
 #+end_src
 
-#+RESULTS:
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # Specify the model
 model_1 = tfdf.keras.RandomForestModel(verbose=2)
 
@@ -99,210 +75,9 @@ model_1 = tfdf.keras.RandomForestModel(verbose=2)
 model_1.fit(train_ds)
 #+end_src
 
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use 8 thread(s) for training
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi450ea5r as temporary training directory
-Reading training dataset...
-Training tensor examples:
-Features: {'island': <tf.Tensor 'data:0' shape=(None,) dtype=string>, 'bill_length_mm': <tf.Tensor 'data_1:0' shape=(None,) dtype=float64>, 'bill_depth_mm': <tf.Tensor 'data_2:0' shape=(None,) dtype=float64>, 'flipper_length_mm': <tf.Tensor 'data_3:0' shape=(None,) dtype=float64>, 'body_mass_g': <tf.Tensor 'data_4:0' shape=(None,) dtype=float64>, 'sex': <tf.Tensor 'data_5:0' shape=(None,) dtype=string>, 'year': <tf.Tensor 'data_6:0' shape=(None,) dtype=int64>}
-Label: Tensor("data_7:0", shape=(None,), dtype=int64)
-Weights: None
-
-Normalized tensor features:
- {'island': SemanticTensor(semantic=<Semantic.CATEGORICAL: 2>, tensor=<tf.Tensor 'data:0' shape=(None,) dtype=string>), 'bill_length_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast:0' shape=(None,) dtype=float32>), 'bill_depth_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_1:0' shape=(None,) dtype=float32>), 'flipper_length_mm': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_2:0' shape=(None,) dtype=float32>), 'body_mass_g': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_3:0' shape=(None,) dtype=float32>), 'sex': SemanticTensor(semantic=<Semantic.CATEGORICAL: 2>, tensor=<tf.Tensor 'data_5:0' shape=(None,) dtype=string>), 'year': SemanticTensor(semantic=<Semantic.NUMERICAL: 1>, tensor=<tf.Tensor 'Cast_4:0' shape=(None,) dtype=float32>)}Training dataset read in 0:00:00.085574. Found 230 examples.
-Training model...
-[INFO 23-05-21 17:26:36.4668 CDT kernel.cc:773] Start Yggdrasil model training
-[INFO 23-05-21 17:26:36.4668 CDT kernel.cc:774] Collect training examples
-[INFO 23-05-21 17:26:36.4668 CDT kernel.cc:787] Dataspec guide:
-column_guides {
-  column_name_pattern: "^__LABEL$"
-  type: CATEGORICAL
-  categorial {
-    min_vocab_frequency: 0
-    max_vocab_count: -1
-  }
-}
-default_column_guide {
-  categorial {
-    max_vocab_count: 2000
-  }
-  discretized_numerical {
-    maximum_num_bins: 255
-  }
-}
-ignore_columns_without_guides: false
-detect_numerical_as_discretized_numerical: false
-
-[INFO 23-05-21 17:26:36.4669 CDT kernel.cc:393] Number of batches: 1
-[INFO 23-05-21 17:26:36.4669 CDT kernel.cc:394] Number of examples: 230
-[INFO 23-05-21 17:26:36.4669 CDT kernel.cc:794] Training dataset:
-Number of records: 230
-Number of columns: 8
-
-Number of columns by type:
-	NUMERICAL: 5 (62.5%)
-	CATEGORICAL: 3 (37.5%)
-
-Columns:
-
-NUMERICAL: 5 (62.5%)
-	1: "bill_depth_mm" NUMERICAL num-nas:2 (0.869565%) mean:17.1241 min:13.2 max:21.1 sd:1.92397
-	2: "bill_length_mm" NUMERICAL num-nas:2 (0.869565%) mean:43.7636 min:32.1 max:58 sd:5.59962
-	3: "body_mass_g" NUMERICAL num-nas:2 (0.869565%) mean:4225.66 min:2850 max:6300 sd:824.069
-	4: "flipper_length_mm" NUMERICAL num-nas:2 (0.869565%) mean:201.013 min:172 max:231 sd:14.8038
-	7: "year" NUMERICAL mean:2007.97 min:2007 max:2009 sd:0.820358
-
-CATEGORICAL: 3 (37.5%)
-	0: "__LABEL" CATEGORICAL integerized vocab-size:4 no-ood-item
-	5: "island" CATEGORICAL has-dict vocab-size:4 zero-ood-items most-frequent:"Biscoe" 121 (52.6087%)
-	6: "sex" CATEGORICAL num-nas:9 (3.91304%) has-dict vocab-size:3 zero-ood-items most-frequent:"female" 111 (50.2262%)
-
-Terminology:
-	nas: Number of non-available (i.e. missing) values.
-	ood: Out of dictionary.
-	manually-defined: Attribute which type is manually defined by the user i.e. the type was not automatically inferred.
-	tokenized: The attribute value is obtained through tokenization.
-	has-dict: The attribute is attached to a string dictionary e.g. a categorical attribute stored as a string.
-	vocab-size: Number of unique values.
-
-[INFO 23-05-21 17:26:36.4669 CDT kernel.cc:810] Configure learner
-[INFO 23-05-21 17:26:36.4670 CDT kernel.cc:824] Training config:
-learner: "RANDOM_FOREST"
-features: "^bill_depth_mm$"
-features: "^bill_length_mm$"
-features: "^body_mass_g$"
-features: "^flipper_length_mm$"
-features: "^island$"
-features: "^sex$"
-features: "^year$"
-label: "^__LABEL$"
-task: CLASSIFICATION
-random_seed: 123456
-metadata {
-  framework: "TF Keras"
-}
-pure_serving_model: false
-[yggdrasil_decision_forests.model.random_forest.proto.random_forest_config] {
-  num_trees: 300
-  decision_tree {
-    max_depth: 16
-    min_examples: 5
-    in_split_min_examples_check: true
-    keep_non_leaf_label_distribution: true
-    num_candidate_attributes: 0
-    missing_value_policy: GLOBAL_IMPUTATION
-    allow_na_conditions: false
-    categorical_set_greedy_forward {
-      sampling: 0.1
-      max_num_items: -1
-      min_item_frequency: 1
-    }
-    growing_strategy_local {
-    }
-    categorical {
-      cart {
-      }
-    }
-    axis_aligned_split {
-    }
-    internal {
-      sorting_strategy: PRESORTED
-    }
-    uplift {
-      min_examples_in_treatment: 5
-      split_score: KULLBACK_LEIBLER
-    }
-  }
-  winner_take_all_inference: true
-  compute_oob_performances: true
-  compute_oob_variable_importances: false
-  num_oob_variable_importances_permutations: 1
-  bootstrap_training_dataset: true
-  bootstrap_size_ratio: 1
-  adapt_bootstrap_size_ratio_for_maximum_training_duration: false
-  sampling_with_replacement: true
-}
-
-[INFO 23-05-21 17:26:36.4671 CDT kernel.cc:827] Deployment config:
-cache_path: "/var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi450ea5r/working_cache"
-num_threads: 8
-try_resume_training: true
-
-[INFO 23-05-21 17:26:36.4671 CDT kernel.cc:889] Train model
-[INFO 23-05-21 17:26:36.4671 CDT random_forest.cc:416] Training random forest on 230 example(s) and 7 feature(s).
-[INFO 23-05-21 17:26:36.4675 CDT random_forest.cc:805] Training of tree  1/300 (tree index:0) done accuracy:0.893617 logloss:3.83443
-[INFO 23-05-21 17:26:36.4678 CDT random_forest.cc:805] Training of tree  11/300 (tree index:14) done accuracy:0.951965 logloss:0.397908
-[INFO 23-05-21 17:26:36.4679 CDT random_forest.cc:805] Training of tree  21/300 (tree index:20) done accuracy:0.952174 logloss:0.256531
-[INFO 23-05-21 17:26:36.4682 CDT random_forest.cc:805] Training of tree  31/300 (tree index:31) done accuracy:0.956522 logloss:0.245538
-[INFO 23-05-21 17:26:36.4684 CDT random_forest.cc:805] Training of tree  41/300 (tree index:41) done accuracy:0.96087 logloss:0.238082
-[INFO 23-05-21 17:26:36.4686 CDT random_forest.cc:805] Training of tree  51/300 (tree index:52) done accuracy:0.965217 logloss:0.235692
-[INFO 23-05-21 17:26:36.4688 CDT random_forest.cc:805] Training of tree  61/300 (tree index:63) done accuracy:0.965217 logloss:0.0876153
-[INFO 23-05-21 17:26:36.4690 CDT random_forest.cc:805] Training of tree  71/300 (tree index:70) done accuracy:0.969565 logloss:0.0884885
-[INFO 23-05-21 17:26:36.4692 CDT random_forest.cc:805] Training of tree  81/300 (tree index:82) done accuracy:0.969565 logloss:0.0842522
-[INFO 23-05-21 17:26:36.4694 CDT random_forest.cc:805] Training of tree  91/300 (tree index:87) done accuracy:0.973913 logloss:0.0851124
-[INFO 23-05-21 17:26:36.4696 CDT random_forest.cc:805] Training of tree  103/300 (tree index:105) done accuracy:0.965217 logloss:0.0845747
-[INFO 23-05-21 17:26:36.4698 CDT random_forest.cc:805] Training of tree  114/300 (tree index:113) done accuracy:0.973913 logloss:0.0876888
-[INFO 23-05-21 17:26:36.4701 CDT random_forest.cc:805] Training of tree  125/300 (tree index:125) done accuracy:0.978261 logloss:0.0886663
-[INFO 23-05-21 17:26:36.4704 CDT random_forest.cc:805] Training of tree  136/300 (tree index:137) done accuracy:0.978261 logloss:0.0866955
-[INFO 23-05-21 17:26:36.4706 CDT random_forest.cc:805] Training of tree  146/300 (tree index:147) done accuracy:0.978261 logloss:0.0880517
-[INFO 23-05-21 17:26:36.4709 CDT random_forest.cc:805] Training of tree  156/300 (tree index:149) done accuracy:0.973913 logloss:0.0890742
-[INFO 23-05-21 17:26:36.4711 CDT random_forest.cc:805] Training of tree  168/300 (tree index:169) done accuracy:0.973913 logloss:0.0885888
-[INFO 23-05-21 17:26:36.4713 CDT random_forest.cc:805] Training of tree  178/300 (tree index:178) done accuracy:0.973913 logloss:0.0892722
-[INFO 23-05-21 17:26:36.4716 CDT random_forest.cc:805] Training of tree  188/300 (tree index:188) done accuracy:0.973913 logloss:0.0876729
-[INFO 23-05-21 17:26:36.4718 CDT random_forest.cc:805] Training of tree  199/300 (tree index:193) done accuracy:0.973913 logloss:0.0881158
-[INFO 23-05-21 17:26:36.4720 CDT random_forest.cc:805] Training of tree  210/300 (tree index:212) done accuracy:0.969565 logloss:0.0884878
-[INFO 23-05-21 17:26:36.4723 CDT random_forest.cc:805] Training of tree  223/300 (tree index:218) done accuracy:0.969565 logloss:0.0878244
-[INFO 23-05-21 17:26:36.4726 CDT random_forest.cc:805] Training of tree  233/300 (tree index:232) done accuracy:0.96087 logloss:0.0873971
-[INFO 23-05-21 17:26:36.4728 CDT random_forest.cc:805] Training of tree  244/300 (tree index:246) done accuracy:0.965217 logloss:0.0863332
-[INFO 23-05-21 17:26:36.4730 CDT random_forest.cc:805] Training of tree  255/300 (tree index:251) done accuracy:0.969565 logloss:0.0858581
-[INFO 23-05-21 17:26:36.4732 CDT random_forest.cc:805] Training of tree  265/300 (tree index:259) done accuracy:0.969565 logloss:0.0863562
-[INFO 23-05-21 17:26:36.4734 CDT random_forest.cc:805] Training of tree  276/300 (tree index:277) done accuracy:0.969565 logloss:0.0867223
-[INFO 23-05-21 17:26:36.4736 CDT random_forest.cc:805] Training of tree  286/300 (tree index:285) done accuracy:0.969565 logloss:0.0868027
-[INFO 23-05-21 17:26:36.4738 CDT random_forest.cc:805] Training of tree  297/300 (tree index:294) done accuracy:0.969565 logloss:0.0866831
-[INFO 23-05-21 17:26:36.4739 CDT random_forest.cc:805] Training of tree  300/300 (tree index:299) done accuracy:0.969565 logloss:0.0863994
-[INFO 23-05-21 17:26:36.4740 CDT random_forest.cc:885] Final OOB metrics: accuracy:0.969565 logloss:0.0863994
-[INFO 23-05-21 17:26:36.4742 CDT kernel.cc:926] Export model in log directory: /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi450ea5r with prefix fc1aa2b881de4a8f
-[INFO 23-05-21 17:26:36.4762 CDT kernel.cc:944] Save model in resources
-[INFO 23-05-21 17:26:36.4775 CDT abstract_model.cc:849] Model self evaluation:
-Number of predictions (without weights): 230
-Number of predictions (with weights): 230
-Task: CLASSIFICATION
-Label: __LABEL
-
-Accuracy: 0.969565  CI95[W][0.943597 0.985631]
-LogLoss: : 0.0863994
-ErrorRate: : 0.0304348
-
-Default Accuracy: : 0.447826
-Default LogLoss: : 1.035
-Default ErrorRate: : 0.552174
-
-Confusion Table:
-truth\prediction
-   0   1   2   3
-0  0   0   0   0
-1  0  99   1   3
-2  0   1  85   0
-3  0   0   2  39
-Total: 230
-
-One vs other classes:
-[INFO 23-05-21 17:26:36.4814 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpi450ea5r/model/ with prefix fc1aa2b881de4a8f
-[INFO 23-05-21 17:26:36.4858 CDT decision_forest.cc:660] Model loaded with 300 root(s), 3538 node(s), and 7 input feature(s).
-[INFO 23-05-21 17:26:36.4859 CDT abstract_model.cc:1312] Engine "RandomForestGeneric" built
-[INFO 23-05-21 17:26:36.4859 CDT kernel.cc:1074] Use fast generic engine
-Model trained in 0:00:00.021995
-Compiling model...
-Model compiled.
-#+end_example
-: <keras.callbacks.History at 0x2b0acfcd0>
-:END:
-
 * Evaluate the model
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.compile(metrics=["accuracy"])
 evaluation = model_1.evaluate(test_ds, return_dict=True)
 print()
@@ -311,331 +86,41 @@ for name, value in evaluation.items():
     print(f"{name}: {value:.4f}")
 #+end_src
 
-#+RESULTS:
-:RESULTS:
-: 1/1 [==============================] - 0s 67ms/step - loss: 0.0000e+00 - accuracy: 0.9649
-:
-:
-: loss: 0.0000
-: accuracy: 0.9649
-:END:
-
 * TensorFlow Serving
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.save("/tmp/my_saved_model")
 #+end_src
 
-#+RESULTS:
-: WARNING:absl:Found untraced functions such as call_get_leaves while saving (showing 1 of 1). These functions will not be directly callable after loading.
-: INFO:tensorflow:Assets written to: /tmp/my_saved_model/assets
-: INFO:tensorflow:Assets written to: /tmp/my_saved_model/assets
-
 * Model structure and feature importance
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.summary()
 #+end_src
 
-#+RESULTS:
-#+begin_example
-Model: "random_forest_model_8"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #
-=================================================================
-=================================================================
-Total params: 1
-Trainable params: 0
-Non-trainable params: 1
-_________________________________________________________________
-Type: "RANDOM_FOREST"
-Task: CLASSIFICATION
-Label: "__LABEL"
-
-Input Features (7):
-	bill_depth_mm
-	bill_length_mm
-	body_mass_g
-	flipper_length_mm
-	island
-	sex
-	year
-
-No weights
-
-Variable Importance: INV_MEAN_MIN_DEPTH:
-    1.    "bill_length_mm"  0.467313 ################
-    2. "flipper_length_mm"  0.467098 ###############
-    3.            "island"  0.325067 #####
-    4.     "bill_depth_mm"  0.312571 ####
-    5.       "body_mass_g"  0.287295 ##
-    6.              "year"  0.257995
-    7.               "sex"  0.257572
-
-Variable Importance: NUM_AS_ROOT:
-    1. "flipper_length_mm" 154.000000 ################
-    2.    "bill_length_mm" 109.000000 ###########
-    3.     "bill_depth_mm" 23.000000 #
-    4.       "body_mass_g"  8.000000
-    5.            "island"  6.000000
-
-Variable Importance: NUM_NODES:
-    1.    "bill_length_mm" 560.000000 ################
-    2. "flipper_length_mm" 310.000000 ########
-    3.     "bill_depth_mm" 277.000000 #######
-    4.       "body_mass_g" 219.000000 #####
-    5.            "island" 217.000000 #####
-    6.               "sex" 19.000000
-    7.              "year" 17.000000
-
-Variable Importance: SUM_SCORE:
-    1.    "bill_length_mm" 27068.647720 ################
-    2. "flipper_length_mm" 23781.228443 ##############
-    3.            "island" 8910.049154 #####
-    4.     "bill_depth_mm" 6288.607422 ###
-    5.       "body_mass_g" 2472.623208 #
-    6.               "sex" 133.624281
-    7.              "year" 54.041099
-
-
-
-Winner takes all: true
-Out-of-bag evaluation: accuracy:0.969565 logloss:0.0863994
-Number of trees: 300
-Total number of nodes: 3538
-
-Number of nodes by tree:
-Count: 300 Average: 11.7933 StdDev: 2.76598
-Min: 7 Max: 25 Ignored: 0
-----------------------------------------------
-[  7,  8)   9   3.00%   3.00% #
-[  8,  9)   0   0.00%   3.00%
-[  9, 10)  71  23.67%  26.67% #######
-[ 10, 11)   0   0.00%  26.67%
-[ 11, 12) 102  34.00%  60.67% ##########
-[ 12, 13)   0   0.00%  60.67%
-[ 13, 14)  65  21.67%  82.33% ######
-[ 14, 15)   0   0.00%  82.33%
-[ 15, 16)  32  10.67%  93.00% ###
-[ 16, 17)   0   0.00%  93.00%
-[ 17, 18)  12   4.00%  97.00% #
-[ 18, 19)   0   0.00%  97.00%
-[ 19, 20)   4   1.33%  98.33%
-[ 20, 21)   0   0.00%  98.33%
-[ 21, 22)   4   1.33%  99.67%
-[ 22, 23)   0   0.00%  99.67%
-[ 23, 24)   0   0.00%  99.67%
-[ 24, 25)   0   0.00%  99.67%
-[ 25, 25]   1   0.33% 100.00%
-
-Depth by leafs:
-Count: 1919 Average: 2.97968 StdDev: 0.973384
-Min: 1 Max: 6 Ignored: 0
-----------------------------------------------
-[ 1, 2)  69   3.60%   3.60% #
-[ 2, 3) 580  30.22%  33.82% ########
-[ 3, 4) 717  37.36%  71.18% ##########
-[ 4, 5) 443  23.08%  94.27% ######
-[ 5, 6)  94   4.90%  99.17% #
-[ 6, 6]  16   0.83% 100.00%
-
-Number of training obs by leaf:
-Count: 1919 Average: 35.9562 StdDev: 34.3625
-Min: 5 Max: 116 Ignored: 0
-----------------------------------------------
-[   5,  10) 848  44.19%  44.19% ##########
-[  10,  16)  76   3.96%  48.15% #
-[  16,  21)  35   1.82%  49.97%
-[  21,  27)  52   2.71%  52.68% #
-[  27,  33)  86   4.48%  57.17% #
-[  33,  38) 100   5.21%  62.38% #
-[  38,  44)  93   4.85%  67.22% #
-[  44,  49)  29   1.51%  68.73%
-[  49,  55)  16   0.83%  69.57%
-[  55,  61)  10   0.52%  70.09%
-[  61,  66)  40   2.08%  72.17%
-[  66,  72)  44   2.29%  74.47% #
-[  72,  77)  59   3.07%  77.54% #
-[  77,  83) 108   5.63%  83.17% #
-[  83,  89) 116   6.04%  89.21% #
-[  89,  94)  72   3.75%  92.97% #
-[  94, 100)  70   3.65%  96.61% #
-[ 100, 105)  36   1.88%  98.49%
-[ 105, 111)  26   1.35%  99.84%
-[ 111, 116]   3   0.16% 100.00%
-
-Attribute in nodes:
-	560 : bill_length_mm [NUMERICAL]
-	310 : flipper_length_mm [NUMERICAL]
-	277 : bill_depth_mm [NUMERICAL]
-	219 : body_mass_g [NUMERICAL]
-	217 : island [CATEGORICAL]
-	19 : sex [CATEGORICAL]
-	17 : year [NUMERICAL]
-
-Attribute in nodes with depth <= 0:
-	154 : flipper_length_mm [NUMERICAL]
-	109 : bill_length_mm [NUMERICAL]
-	23 : bill_depth_mm [NUMERICAL]
-	8 : body_mass_g [NUMERICAL]
-	6 : island [CATEGORICAL]
-
-Attribute in nodes with depth <= 1:
-	250 : bill_length_mm [NUMERICAL]
-	226 : flipper_length_mm [NUMERICAL]
-	153 : bill_depth_mm [NUMERICAL]
-	126 : island [CATEGORICAL]
-	75 : body_mass_g [NUMERICAL]
-	1 : year [NUMERICAL]
-
-Attribute in nodes with depth <= 2:
-	434 : bill_length_mm [NUMERICAL]
-	282 : flipper_length_mm [NUMERICAL]
-	225 : bill_depth_mm [NUMERICAL]
-	205 : island [CATEGORICAL]
-	155 : body_mass_g [NUMERICAL]
-	6 : year [NUMERICAL]
-	6 : sex [CATEGORICAL]
-
-Attribute in nodes with depth <= 3:
-	534 : bill_length_mm [NUMERICAL]
-	305 : flipper_length_mm [NUMERICAL]
-	268 : bill_depth_mm [NUMERICAL]
-	215 : island [CATEGORICAL]
-	207 : body_mass_g [NUMERICAL]
-	17 : sex [CATEGORICAL]
-	14 : year [NUMERICAL]
-
-Attribute in nodes with depth <= 5:
-	560 : bill_length_mm [NUMERICAL]
-	310 : flipper_length_mm [NUMERICAL]
-	277 : bill_depth_mm [NUMERICAL]
-	219 : body_mass_g [NUMERICAL]
-	217 : island [CATEGORICAL]
-	19 : sex [CATEGORICAL]
-	17 : year [NUMERICAL]
-
-Condition type in nodes:
-	1383 : HigherCondition
-	236 : ContainsBitmapCondition
-Condition type in nodes with depth <= 0:
-	294 : HigherCondition
-	6 : ContainsBitmapCondition
-Condition type in nodes with depth <= 1:
-	705 : HigherCondition
-	126 : ContainsBitmapCondition
-Condition type in nodes with depth <= 2:
-	1102 : HigherCondition
-	211 : ContainsBitmapCondition
-Condition type in nodes with depth <= 3:
-	1328 : HigherCondition
-	232 : ContainsBitmapCondition
-Condition type in nodes with depth <= 5:
-	1383 : HigherCondition
-	236 : ContainsBitmapCondition
-Node format: NOT_SET
-
-Training OOB:
-	trees: 1, Out-of-bag evaluation: accuracy:0.893617 logloss:3.83443
-	trees: 11, Out-of-bag evaluation: accuracy:0.951965 logloss:0.397908
-	trees: 21, Out-of-bag evaluation: accuracy:0.952174 logloss:0.256531
-	trees: 31, Out-of-bag evaluation: accuracy:0.956522 logloss:0.245538
-	trees: 41, Out-of-bag evaluation: accuracy:0.96087 logloss:0.238082
-	trees: 51, Out-of-bag evaluation: accuracy:0.965217 logloss:0.235692
-	trees: 61, Out-of-bag evaluation: accuracy:0.965217 logloss:0.0876153
-	trees: 71, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0884885
-	trees: 81, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0842522
-	trees: 91, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0851124
-	trees: 103, Out-of-bag evaluation: accuracy:0.965217 logloss:0.0845747
-	trees: 114, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0876888
-	trees: 125, Out-of-bag evaluation: accuracy:0.978261 logloss:0.0886663
-	trees: 136, Out-of-bag evaluation: accuracy:0.978261 logloss:0.0866955
-	trees: 146, Out-of-bag evaluation: accuracy:0.978261 logloss:0.0880517
-	trees: 156, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0890742
-	trees: 168, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0885888
-	trees: 178, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0892722
-	trees: 188, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0876729
-	trees: 199, Out-of-bag evaluation: accuracy:0.973913 logloss:0.0881158
-	trees: 210, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0884878
-	trees: 223, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0878244
-	trees: 233, Out-of-bag evaluation: accuracy:0.96087 logloss:0.0873971
-	trees: 244, Out-of-bag evaluation: accuracy:0.965217 logloss:0.0863332
-	trees: 255, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0858581
-	trees: 265, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0863562
-	trees: 276, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0867223
-	trees: 286, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0868027
-	trees: 297, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0866831
-	trees: 300, Out-of-bag evaluation: accuracy:0.969565 logloss:0.0863994
-#+end_example
-
 * Using make_inspector
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.make_inspector().features()
 #+end_src
 
-#+RESULTS:
-: '("bill_depth_mm" (1; #1)
-:  "bill_length_mm" (1; #2)
-:  "body_mass_g" (1; #3)
-:  "flipper_length_mm" (1; #4)
-:  "island" (4; #5)
-:  "sex" (4; #6)
-:  "year" (1; #7))
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.make_inspector().variable_importances()
 #+end_src
 
-#+RESULTS:
-#+begin_example
-'("NUM_AS_ROOT": (("flipper_length_mm" (1; #4)  154.0)
-  ("bill_length_mm" (1; #2)  109.0)
-  ("bill_depth_mm" (1; #1)  23.0)
-  ("body_mass_g" (1; #3)  8.0)
-  ("island" (4; #5)  6.0))
- "SUM_SCORE": (("bill_length_mm" (1; #2)  27068.647720232606)
-  ("flipper_length_mm" (1; #4)  23781.228443380445)
-  ("island" (4; #5)  8910.049153521657)
-  ("bill_depth_mm" (1; #1)  6288.607421500608)
-  ("body_mass_g" (1; #3)  2472.6232082974166)
-  ("sex" (4; #6)  133.62428081035614)
-  ("year" (1; #7)  54.041098991408944))
- "INV_MEAN_MIN_DEPTH": (("bill_length_mm" (1; #2)  0.46731267005129284)
-  ("flipper_length_mm" (1; #4)  0.4670981689145158)
-  ("island" (4; #5)  0.3250667694415043)
-  ("bill_depth_mm" (1; #1)  0.312571246730959)
-  ("body_mass_g" (1; #3)  0.28729544861962414)
-  ("year" (1; #7)  0.25799494186440264)
-  ("sex" (4; #6)  0.2575724551842979))
- "NUM_NODES": (("bill_length_mm" (1; #2)  560.0)
-  ("flipper_length_mm" (1; #4)  310.0)
-  ("bill_depth_mm" (1; #1)  277.0)
-  ("body_mass_g" (1; #3)  219.0)
-  ("island" (4; #5)  217.0)
-  ("sex" (4; #6)  19.0)
-  ("year" (1; #7)  17.0)))
-#+end_example
-
 * Model self evaluation
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.make_inspector().evaluation()
 #+end_src
 
-#+RESULTS:
-: Evaluation(num_examples=230, accuracy=0.9695652173913043, loss=0.08639943097799045, rmse=None, ndcg=None, aucs=None, auuc=None, qini=None)
-
 * Plotting the training logs
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 model_1.make_inspector().training_logs()
 #+end_src
 
-#+RESULTS:
-| TrainLog | (num_trees=1 evaluation=Evaluation (num_examples=94 accuracy=0.8936170212765957 loss=3.8344310192351645 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=11 evaluation=Evaluation (num_examples=229 accuracy=0.9519650655021834 loss=0.3979084365492825 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=21 evaluation=Evaluation (num_examples=230 accuracy=0.9521739130434783 loss=0.256530797837869 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=31 evaluation=Evaluation (num_examples=230 accuracy=0.9565217391304348 loss=0.24553837980265203 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=41 evaluation=Evaluation (num_examples=230 accuracy=0.9608695652173913 loss=0.23808207458452038 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=51 evaluation=Evaluation (num_examples=230 accuracy=0.9652173913043478 loss=0.23569228258793767 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=61 evaluation=Evaluation (num_examples=230 accuracy=0.9652173913043478 loss=0.08761531755976056 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=71 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08848850986231928 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=81 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08425215907070947 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=91 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08511237564456203 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=103 evaluation=Evaluation (num_examples=230 accuracy=0.9652173913043478 loss=0.08457471279670363 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=114 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08768884815761577 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=125 evaluation=Evaluation (num_examples=230 accuracy=0.9782608695652174 loss=0.08866625417671774 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=136 evaluation=Evaluation (num_examples=230 accuracy=0.9782608695652174 loss=0.0866954563104588 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=146 evaluation=Evaluation (num_examples=230 accuracy=0.9782608695652174 loss=0.08805167473366728 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=156 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08907415513354151 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=168 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08858880077529213 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=178 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08927224753424526 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=188 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08767290617865713 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=199 evaluation=Evaluation (num_examples=230 accuracy=0.9739130434782609 loss=0.08811583408842916 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=210 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08848779085294708 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=223 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08782441840385613 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=233 evaluation=Evaluation (num_examples=230 accuracy=0.9608695652173913 loss=0.08739714129301517 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=244 evaluation=Evaluation (num_examples=230 accuracy=0.9652173913043478 loss=0.08633318764926946 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=255 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.0858581131607618 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=265 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08635621651116272 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=276 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08672231045025199 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=286 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08680266892213537 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=297 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08668314180863293 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num_trees=300 evaluation=Evaluation (num_examples=230 accuracy=0.9695652173913043 loss=0.08639943097799045 rmse=None ndcg=None aucs=None auuc=None qini=None)) |
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 import matplotlib.pyplot as plt
 
 logs = model_1.make_inspector().training_logs()
@@ -655,23 +140,17 @@ plt.ylabel("Logloss (out-of-bag)")
 plt.show()
 #+end_src
 
-#+RESULTS:
-[[file:./.ob-jupyter/fb89914d7d08aeb201682ce93bf7f3603ee7d7b7.png]]
-
 * Retrain model with different learning algorithm
 
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 tfdf.keras.get_all_models()
 #+end_src
-
-#+RESULTS:
-| tensorflow_decision_forests.keras.RandomForestModel | tensorflow_decision_forests.keras.GradientBoostedTreesModel | tensorflow_decision_forests.keras.CartModel | tensorflow_decision_forests.keras.DistributedGradientBoostedTreesModel |
 
 
 * Using a subset of features
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 feature_1 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_2 = tfdf.keras.FeatureUsage(name="island")
 
@@ -688,30 +167,6 @@ model_2.fit(train_ds, validation_data=test_ds)
 
 print(model_2.evaluate(test_ds, return_dict=True))
 #+end_src
-
-#+RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpgk1_r93x as temporary training directory
-Reading training dataset...
-[WARNING 23-05-21 17:26:36.9927 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:36.9927 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:36.9927 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Training dataset read in 0:00:00.062840. Found 230 examples.
-Reading validation dataset...
-WARNING:tensorflow:5 out of the last 5 calls to <function CoreModel._consumes_validation_examples_until_eof at 0x176762a60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-WARNING:tensorflow:5 out of the last 5 calls to <function CoreModel._consumes_validation_examples_until_eof at 0x176762a60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-Num validation examples: tf.Tensor(114, shape=(), dtype=int32)
-Validation dataset read in 0:00:00.065098. Found 114 examples.
-Training model...
-Model trained in 0:00:00.033433
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:37.1578 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpgk1_r93x/model/ with prefix 376b98b089ae4185
-[INFO 23-05-21 17:26:37.1591 CDT decision_forest.cc:660] Model loaded with 33 root(s), 925 node(s), and 2 input feature(s).
-[INFO 23-05-21 17:26:37.1591 CDT kernel.cc:1074] Use fast generic engine
-1/1 [==============================] - 0s 48ms/step - loss: 0.0000e+00 - accuracy: 0.9649
-{'loss': 0.0, 'accuracy': 0.9649122953414917}
-#+end_example
 
 
 *TF-DF* attaches a *semantics* to each feature. This semantics controls how the feature is used by the model. The following semantics are currently supported.
@@ -730,7 +185,7 @@ Model compiled.
 
 In some cases, the inferred semantics is incorrect. For example: An Enum stored as an integer is semantically categorical, but it will be detected as numerical. In this case, you should specify the semantic argument in the input. The education_num field of the Adult dataset is a classic example.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 feature_1 = tfdf.keras.FeatureUsage(name="year", semantic=tfdf.keras.FeatureSemantic.CATEGORICAL)
 feature_2 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_3 = tfdf.keras.FeatureUsage(name="sex")
@@ -741,31 +196,6 @@ model_3.compile(metrics=["accuracy"])
 
 model_3.fit(train_ds, validation_data=test_ds)
 #+end_src
-
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpowsp3r1r as temporary training directory
-[WARNING 23-05-21 17:26:37.3233 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:37.3233 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:37.3233 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Reading training dataset...
-Training dataset read in 0:00:00.065535. Found 230 examples.
-Reading validation dataset...
-WARNING:tensorflow:6 out of the last 6 calls to <function CoreModel._consumes_validation_examples_until_eof at 0x176762a60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-WARNING:tensorflow:6 out of the last 6 calls to <function CoreModel._consumes_validation_examples_until_eof at 0x176762a60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-Num validation examples: tf.Tensor(114, shape=(), dtype=int32)
-Validation dataset read in 0:00:00.063983. Found 114 examples.
-Training model...
-Model trained in 0:00:00.044963
-Compiling model...
-[INFO 23-05-21 17:26:37.5010 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpowsp3r1r/model/ with prefix 5654bb4646224001
-[INFO 23-05-21 17:26:37.5024 CDT decision_forest.cc:660] Model loaded with 33 root(s), 987 node(s), and 3 input feature(s).
-[INFO 23-05-21 17:26:37.5024 CDT kernel.cc:1074] Use fast generic engine
-Model compiled.
-#+end_example
-: <keras.callbacks.History at 0x2b7fb2f70>
-:END:
 Note that ~year~ is in the list of CATEGORICAL features (unlike the first run)
 
 
@@ -775,7 +205,7 @@ Note that ~year~ is in the list of CATEGORICAL features (unlike the first run)
 
 *I will figure out how to obtain that list without the question mark command.*
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # A classical but slightly more complex model.
 model_6 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500, growing_strategy="BEST_FIRST_GLOBAL", max_depth=8)
@@ -783,32 +213,12 @@ model_6 = tfdf.keras.GradientBoostedTreesModel(
 model_6.fit(train_ds)
 #+end_src
 
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpwc8qgnhl as temporary training directory
-Reading training dataset...
-[WARNING 23-05-21 17:26:37.6120 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:37.6121 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:37.6121 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Training dataset read in 0:00:00.077553. Found 230 examples.
-Training model...
-Model trained in 0:00:00.276670
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:37.9586 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpwc8qgnhl/model/ with prefix b91146f702a74214
-[INFO 23-05-21 17:26:37.9696 CDT decision_forest.cc:660] Model loaded with 189 root(s), 9049 node(s), and 7 input feature(s).
-[INFO 23-05-21 17:26:37.9696 CDT kernel.cc:1074] Use fast generic engine
-#+end_example
-: <keras.callbacks.History at 0x2c29bd3a0>
-:END:
-#+begin_src jupyter-python :exports code results
+
+#+begin_src jupyter-python :exports both
 model_6.summary()
 #+end_src
 
-#+RESULTS:
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # A more complex, but possibly, more accurate model.
 model_7 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500,
@@ -820,64 +230,20 @@ model_7 = tfdf.keras.GradientBoostedTreesModel(
 
 model_7.fit(train_ds)
 #+end_src
-
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpvlttsbwt as temporary training directory
-Reading training dataset...
-Training dataset read in 0:00:00.074969. Found 230 examples.
-Training model...
-[WARNING 23-05-21 17:26:38.0313 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:38.0314 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:38.0314 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Model trained in 0:00:00.342616
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:38.4447 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpvlttsbwt/model/ with prefix 62968e2dd2e1472e
-[INFO 23-05-21 17:26:38.4531 CDT decision_forest.cc:660] Model loaded with 138 root(s), 6320 node(s), and 7 input feature(s).
-[INFO 23-05-21 17:26:38.4531 CDT kernel.cc:1074] Use fast generic engine
-#+end_example
-: <keras.callbacks.History at 0x2c49b8a60>
-:END:
 As new training methods are published and implemented, combinations of hyper-parameters can emerge as good or almost-always-better than the default parameters. To avoid changing the default hyper-parameter values these good combinations are indexed and availale as hyper-parameter templates.
 
 For example, the benchmark_rank1 template is the best combination on our internal benchmarks. Those templates are versioned to allow training configuration stability e.g. benchmark_rank1@v1.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # A good template of hyper-parameters.
 model_8 = tfdf.keras.GradientBoostedTreesModel(hyperparameter_template="benchmark_rank1")
 model_8.fit(train_ds)
 #+end_src
-
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Resolve hyper-parameter template "benchmark_rank1" to "benchmark_rank1@v1" -> {'growing_strategy': 'BEST_FIRST_GLOBAL', 'categorical_algorithm': 'RANDOM', 'split_axis': 'SPARSE_OBLIQUE', 'sparse_oblique_normalization': 'MIN_MAX', 'sparse_oblique_num_projections_exponent': 1.0}.
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpgkv_yd33 as temporary training directory
-Reading training dataset...
-Training dataset read in 0:00:00.077626. Found 230 examples.
-Training model...
-[WARNING 23-05-21 17:26:38.5121 CDT gradient_boosted_trees.cc:1797] "goss_alpha" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:38.5121 CDT gradient_boosted_trees.cc:1808] "goss_beta" set but "sampling_method" not equal to "GOSS".
-[WARNING 23-05-21 17:26:38.5121 CDT gradient_boosted_trees.cc:1822] "selective_gradient_boosting_ratio" set but "sampling_method" not equal to "SELGB".
-Model trained in 0:00:00.243837
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:38.8274 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpgkv_yd33/model/ with prefix afa6212123a44723
-[INFO 23-05-21 17:26:38.8372 CDT decision_forest.cc:660] Model loaded with 186 root(s), 7246 node(s), and 7 input feature(s).
-[INFO 23-05-21 17:26:38.8372 CDT kernel.cc:1074] Use fast generic engine
-#+end_example
-: <keras.callbacks.History at 0x2c4c92f70>
-:END:
 The available templates are available with ~predefined_hyperparameters~. Note that different learning algorithms have different templates, even if the name is similar.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 print(tfdf.keras.GradientBoostedTreesModel.predefined_hyperparameters())
 #+end_src
-
-#+RESULTS:
-: [HyperParameterTemplate(name='better_default', version=1, parameters={'growing_strategy': 'BEST_FIRST_GLOBAL'}, description='A configuration that is generally better than the default parameters without being more expensive.'), HyperParameterTemplate(name='benchmark_rank1', version=1, parameters={'growing_strategy': 'BEST_FIRST_GLOBAL', 'categorical_algorithm': 'RANDOM', 'split_axis': 'SPARSE_OBLIQUE', 'sparse_oblique_normalization': 'MIN_MAX', 'sparse_oblique_num_projections_exponent': 1.0}, description='Top ranking hyper-parameters on our benchmark slightly modified to run in reasonable time.')]
 
 What is returned are the predefined hyper-parameters of the Gradient Boosted Tree model.
 
@@ -894,7 +260,7 @@ Pre-processing features is sometimes necessary to consume signals with complex s
 
 In the next example, pre-process the body_mass_g feature into body_mass_kg = body_mass_g / 1000. The bill_length_mm is consumed without preprocessing. Note that such monotonic transformations have generally no impact on decision forest models.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 body_mass_g = tf.keras.layers.Input(shape=(1,), name="body_mass_g")
 body_mass_kg = body_mass_g / 1000.0
 
@@ -913,195 +279,9 @@ model_4.fit(train_ds)
 model_4.summary()
 #+end_src
 
-#+RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpwiezr57d as temporary training directory
-Reading training dataset...
-Training dataset read in 0:00:00.072512. Found 230 examples.
-Training model...
-Model trained in 0:00:00.021280
-Compiling model...
-/Users/umbertofasci/miniforge3/envs/tensorflow-metal/lib/python3.9/site-packages/keras/engine/functional.py:639: UserWarning: Input dict contained keys ['island', 'bill_depth_mm', 'flipper_length_mm', 'sex', 'year'] which did not match any model input. They will be ignored by the model.
-  inputs = self._flatten_to_reference_inputs(inputs)
-[INFO 23-05-21 17:26:38.9980 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpwiezr57d/model/ with prefix 82c1e2afecd54b95
-[INFO 23-05-21 17:26:39.0042 CDT decision_forest.cc:660] Model loaded with 300 root(s), 4864 node(s), and 2 input feature(s).
-[INFO 23-05-21 17:26:39.0042 CDT kernel.cc:1074] Use fast generic engine
-Model compiled.
-Model: "random_forest_model_9"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #
-=================================================================
- model_2 (Functional)        {'body_mass_kg': (None,   0
-                             1),
-                              'bill_length_mm': (None
-                             , 1)}
-
-=================================================================
-Total params: 1
-Trainable params: 0
-Non-trainable params: 1
-_________________________________________________________________
-Type: "RANDOM_FOREST"
-Task: CLASSIFICATION
-Label: "__LABEL"
-
-Input Features (2):
-	bill_length_mm
-	body_mass_kg
-
-No weights
-
-Variable Importance: INV_MEAN_MIN_DEPTH:
-    1. "bill_length_mm"  1.000000 ################
-    2.   "body_mass_kg"  0.470639
-
-Variable Importance: NUM_AS_ROOT:
-    1. "bill_length_mm" 300.000000
-
-Variable Importance: NUM_NODES:
-    1. "bill_length_mm" 1338.000000 ################
-    2.   "body_mass_kg" 944.000000
-
-Variable Importance: SUM_SCORE:
-    1. "bill_length_mm" 45745.295941 ################
-    2.   "body_mass_kg" 20981.402762
-
-
-
-Winner takes all: true
-Out-of-bag evaluation: accuracy:0.934783 logloss:0.341648
-Number of trees: 300
-Total number of nodes: 4864
-
-Number of nodes by tree:
-Count: 300 Average: 16.2133 StdDev: 2.47005
-Min: 11 Max: 23 Ignored: 0
-----------------------------------------------
-[ 11, 12) 14   4.67%   4.67% ##
-[ 12, 13)  0   0.00%   4.67%
-[ 13, 14) 40  13.33%  18.00% ####
-[ 14, 15)  0   0.00%  18.00%
-[ 15, 16) 85  28.33%  46.33% #########
-[ 16, 17)  0   0.00%  46.33%
-[ 17, 18) 93  31.00%  77.33% ##########
-[ 18, 19)  0   0.00%  77.33%
-[ 19, 20) 48  16.00%  93.33% #####
-[ 20, 21)  0   0.00%  93.33%
-[ 21, 22) 19   6.33%  99.67% ##
-[ 22, 23)  0   0.00%  99.67%
-[ 23, 23]  1   0.33% 100.00%
-
-Depth by leafs:
-Count: 2582 Average: 3.7866 StdDev: 1.43453
-Min: 1 Max: 8 Ignored: 0
-----------------------------------------------
-[ 1, 2) 169   6.55%   6.55% ##
-[ 2, 3) 294  11.39%  17.93% ####
-[ 3, 4) 640  24.79%  42.72% #########
-[ 4, 5) 681  26.37%  69.09% ##########
-[ 5, 6) 479  18.55%  87.65% #######
-[ 6, 7) 254   9.84%  97.48% ####
-[ 7, 8)  63   2.44%  99.92% #
-[ 8, 8]   2   0.08% 100.00%
-
-Number of training obs by leaf:
-Count: 2582 Average: 26.7235 StdDev: 31.4468
-Min: 5 Max: 116 Ignored: 0
-----------------------------------------------
-[   5,  10) 1533  59.37%  59.37% ##########
-[  10,  16)  137   5.31%  64.68% #
-[  16,  21)   17   0.66%  65.34%
-[  21,  27)   49   1.90%  67.23%
-[  27,  33)  106   4.11%  71.34% #
-[  33,  38)   94   3.64%  74.98% #
-[  38,  44)   40   1.55%  76.53%
-[  44,  49)    9   0.35%  76.88%
-[  49,  55)   17   0.66%  77.54%
-[  55,  61)   53   2.05%  79.59%
-[  61,  66)   69   2.67%  82.26%
-[  66,  72)   85   3.29%  85.55% #
-[  72,  77)   57   2.21%  87.76%
-[  77,  83)   28   1.08%  88.85%
-[  83,  89)   55   2.13%  90.98%
-[  89,  94)   76   2.94%  93.92%
-[  94, 100)   85   3.29%  97.21% #
-[ 100, 105)   43   1.67%  98.88%
-[ 105, 111)   27   1.05%  99.92%
-[ 111, 116]    2   0.08% 100.00%
-
-Attribute in nodes:
-	1338 : bill_length_mm [NUMERICAL]
-	944 : body_mass_kg [NUMERICAL]
-
-Attribute in nodes with depth <= 0:
-	300 : bill_length_mm [NUMERICAL]
-
-Attribute in nodes with depth <= 1:
-	428 : bill_length_mm [NUMERICAL]
-	303 : body_mass_kg [NUMERICAL]
-
-Attribute in nodes with depth <= 2:
-	730 : bill_length_mm [NUMERICAL]
-	569 : body_mass_kg [NUMERICAL]
-
-Attribute in nodes with depth <= 3:
-	1027 : bill_length_mm [NUMERICAL]
-	768 : body_mass_kg [NUMERICAL]
-
-Attribute in nodes with depth <= 5:
-	1325 : bill_length_mm [NUMERICAL]
-	924 : body_mass_kg [NUMERICAL]
-
-Condition type in nodes:
-	2282 : HigherCondition
-Condition type in nodes with depth <= 0:
-	300 : HigherCondition
-Condition type in nodes with depth <= 1:
-	731 : HigherCondition
-Condition type in nodes with depth <= 2:
-	1299 : HigherCondition
-Condition type in nodes with depth <= 3:
-	1795 : HigherCondition
-Condition type in nodes with depth <= 5:
-	2249 : HigherCondition
-Node format: NOT_SET
-
-Training OOB:
-	trees: 1, Out-of-bag evaluation: accuracy:0.882979 logloss:4.21787
-	trees: 12, Out-of-bag evaluation: accuracy:0.916667 logloss:1.34079
-	trees: 22, Out-of-bag evaluation: accuracy:0.930435 logloss:0.732496
-	trees: 33, Out-of-bag evaluation: accuracy:0.926087 logloss:0.740247
-	trees: 43, Out-of-bag evaluation: accuracy:0.943478 logloss:0.599996
-	trees: 55, Out-of-bag evaluation: accuracy:0.943478 logloss:0.607077
-	trees: 65, Out-of-bag evaluation: accuracy:0.93913 logloss:0.463195
-	trees: 75, Out-of-bag evaluation: accuracy:0.93913 logloss:0.466004
-	trees: 85, Out-of-bag evaluation: accuracy:0.943478 logloss:0.46508
-	trees: 95, Out-of-bag evaluation: accuracy:0.943478 logloss:0.468429
-	trees: 106, Out-of-bag evaluation: accuracy:0.943478 logloss:0.465669
-	trees: 116, Out-of-bag evaluation: accuracy:0.93913 logloss:0.467058
-	trees: 126, Out-of-bag evaluation: accuracy:0.93913 logloss:0.468295
-	trees: 137, Out-of-bag evaluation: accuracy:0.943478 logloss:0.468052
-	trees: 147, Out-of-bag evaluation: accuracy:0.93913 logloss:0.470777
-	trees: 160, Out-of-bag evaluation: accuracy:0.93913 logloss:0.334185
-	trees: 170, Out-of-bag evaluation: accuracy:0.93913 logloss:0.334915
-	trees: 180, Out-of-bag evaluation: accuracy:0.93913 logloss:0.337615
-	trees: 190, Out-of-bag evaluation: accuracy:0.93913 logloss:0.338269
-	trees: 201, Out-of-bag evaluation: accuracy:0.93913 logloss:0.336724
-	trees: 211, Out-of-bag evaluation: accuracy:0.93913 logloss:0.336677
-	trees: 223, Out-of-bag evaluation: accuracy:0.93913 logloss:0.332898
-	trees: 237, Out-of-bag evaluation: accuracy:0.934783 logloss:0.333527
-	trees: 248, Out-of-bag evaluation: accuracy:0.93913 logloss:0.334771
-	trees: 258, Out-of-bag evaluation: accuracy:0.934783 logloss:0.335647
-	trees: 268, Out-of-bag evaluation: accuracy:0.934783 logloss:0.336032
-	trees: 278, Out-of-bag evaluation: accuracy:0.934783 logloss:0.337875
-	trees: 289, Out-of-bag evaluation: accuracy:0.934783 logloss:0.338865
-	trees: 299, Out-of-bag evaluation: accuracy:0.934783 logloss:0.341043
-	trees: 300, Out-of-bag evaluation: accuracy:0.934783 logloss:0.341648
-#+end_example
-
 The following example re-implements the same logic using TensorFlow Feature Columns.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 def g_to_kg(x):
     return x / 1000
 
@@ -1115,48 +295,20 @@ preprocessing = tf.keras.layers.DenseFeatures(feature_columns)
 model_5 = tfdf.keras.RandomForestModel(preprocessing=preprocessing)
 model_5.fit(train_ds)
 #+end_src
-
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp59ztgc2n as temporary training directory
-Reading training dataset...
-Training dataset read in 0:00:00.081259. Found 230 examples.
-Training model...
-Model trained in 0:00:00.021234
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:39.1657 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmp59ztgc2n/model/ with prefix 79a5a20c578c40dc
-[INFO 23-05-21 17:26:39.1719 CDT decision_forest.cc:660] Model loaded with 300 root(s), 4864 node(s), and 2 input feature(s).
-[INFO 23-05-21 17:26:39.1719 CDT kernel.cc:1074] Use fast generic engine
-#+end_example
-: <keras.callbacks.History at 0x2c4fcf0a0>
-:END:
 * Training a regression model
 
 The previous example trains a classification model(TF-DF does not differentiate between binary classification and multi-class classification). In the next example, train a regression model on the Abalone dataset. The objective of this dataset is to predict the number of rings on a shell of a abalone.
 
 *Note*: The csv file is assembled by appending UCI's header and data files. No preprocessing was applied.
 
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/abalone_raw.csv -O /tmp/abalone.csv
 
 dataset_df = pd.read_csv("/tmp/abalone.csv")
 print(dataset_df.head(3))
 #+end_src
 
-#+RESULTS:
-:   Type  LongestShell  Diameter  Height  WholeWeight  ShuckedWeight
-: 0    M         0.455     0.365   0.095       0.5140         0.2245  \
-: 1    M         0.350     0.265   0.090       0.2255         0.0995
-: 2    F         0.530     0.420   0.135       0.6770         0.2565
-:
-:    VisceraWeight  ShellWeight  Rings
-: 0         0.1010         0.15     15
-: 1         0.0485         0.07      7
-: 2         0.1415         0.21      9
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # Split the dataset into a training and testing dataset.
 train_ds_pd, test_ds_pd = split_dataset(dataset_df)
 print("{} examples in training, {} examples for testing.".format(
@@ -1169,10 +321,7 @@ train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label, task=
 test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label, task=tfdf.keras.Task.REGRESSION)
 #+end_src
 
-#+RESULTS:
-: 2938 examples in training, 1239 examples for testing.
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # Configure the model
 model_7 = tfdf.keras.RandomForestModel(task = tfdf.keras.Task.REGRESSION)
 
@@ -1180,24 +329,7 @@ model_7 = tfdf.keras.RandomForestModel(task = tfdf.keras.Task.REGRESSION)
 model_7.fit(train_ds)
 #+end_src
 
-#+RESULTS:
-:RESULTS:
-#+begin_example
-Use /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpshr6zp0a as temporary training directory
-Reading training dataset...
-Training dataset read in 0:00:00.093746. Found 2938 examples.
-Training model...
-[INFO 23-05-21 17:26:40.1922 CDT kernel.cc:1242] Loading model from path /var/folders/cs/mqzpymhx1qx4m12w19sz9jhc0000gn/T/tmpshr6zp0a/model/ with prefix 720f23e8038347c8
-Model trained in 0:00:00.740219
-Compiling model...
-Model compiled.
-[INFO 23-05-21 17:26:40.5087 CDT decision_forest.cc:660] Model loaded with 300 root(s), 261620 node(s), and 8 input feature(s).
-[INFO 23-05-21 17:26:40.5087 CDT kernel.cc:1074] Use fast generic engine
-#+end_example
-: <keras.callbacks.History at 0x2c4fdb3d0>
-:END:
-
-#+begin_src jupyter-python :exports code results
+#+begin_src jupyter-python :exports both
 # Evaluate the model on the test dataset
 model_7.compile(metrics=["mse"])
 evaluation = model_7.evaluate(test_ds, return_dict=True)
@@ -1207,16 +339,6 @@ print()
 print(f"MSE: {evaluation['mse']}")
 print(f"RMSE: {math.sqrt(evaluation['mse'])}")
 #+end_src
-
-#+RESULTS:
-:RESULTS:
-: 2/2 [==============================] - 0s 16ms/step - loss: 0.0000e+00 - mse: 4.4450
-:
-: {'loss': 0.0, 'mse': 4.444993495941162}
-:
-: MSE: 4.444993495941162
-: RMSE: 2.1083153217536417
-:END:
 
 * Conclusion
 
