@@ -320,5 +320,6 @@ print("{} examples in training, {} examples for testing.".format(
 # Name of the label column.
 label = "Rings"
 
-train_ds = tfdf.keras.pd_dataframe
+train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label, task=tfdf.keras.Task.REGRESSION)
+test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label, task=tfdf.keras.Task.REGRESSION)
 #+end_src
