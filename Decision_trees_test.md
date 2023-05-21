@@ -1,0 +1,343 @@
+
+# Table of Contents
+
+1.  [Importing Libraries](#org9107672)
+2.  [Training a Random Forest model](#orgee7356d)
+3.  [Evaluate the model](#org6c64b64)
+4.  [TensorFlow Serving](#org48fa723)
+5.  [Model structure and feature importance](#org20436f2)
+6.  [Using make<sub>inspector</sub>](#org1da180b)
+7.  [Model self evaluation](#orgb0b374e)
+8.  [Plotting the training logs](#org9652351)
+9.  [Retrain model with different learning algorithm](#orgb844fc9)
+10. [Using a subset of features](#org690a674)
+11. [Hyper-parameters](#org0de3588)
+12. [Feature Preprocessing](#org31eb27d)
+13. [Training a regression model](#orgf028a33)
+14. [Conclusion](#orgccbe2e2)
+
+The following document will contain the basic instructions for creating a decision tree model with tensorflow.
+In this document I will:
+
+1.  Train a binary classification Random Forest on a dataset containing numerical, categorical, and missing data.
+2.  Evaluate the model on the test set.
+3.  Prepare the model for TensorFlow Serving
+4.  Examine the overall of the model and the importance of each feature.
+5.  Re-train the model with a different learning algorithm (Gradient Boost Decision Trees).
+6.  Use a different set of input features.
+7.  Change the hyperparameters of the model.
+8.  Preprocess the features.
+9.  Train the model for regression.
+
+
+<a id="org9107672"></a>
+
+# Importing Libraries
+
+    import tensorflow_decision_forests as tfdf
+    
+    import os
+    import numpy as np
+    import pandas as pd
+    import tensorflow as tf
+    import math
+
+    print("Found TensorFlow Decision Forests v" + tfdf.__version__)
+
+
+<a id="orgee7356d"></a>
+
+# Training a Random Forest model
+
+    # Download the dataset
+    !wget -q https://storage.googleapis.com/download.tensorflow.org/data/palmer_penguins/penguins.csv -O /tmp/penguins.csv
+    
+    # Load the dataset into Pandas DataFrame
+    dataset_df = pd.read_csv("/tmp/penguins.csv")
+    
+    # Display the first 3 examples
+    dataset_df.head(3)
+
+    label = "species"
+    
+    classes = dataset_df[label].unique().tolist()
+    print(f"Label classes: {classes}")
+    
+    dataset_df[label] = dataset_df[label].map(classes.index)
+
+    def split_dataset(dataset, test_ratio=0.30):
+        test_indices = np.random.rand(len(dataset)) < test_ratio
+        return dataset[~test_indices], dataset[test_indices]
+    
+    train_ds_pd, test_ds_pd = split_dataset(dataset_df)
+    print("{} examples in training, {} examples for testing.".format(
+        len(train_ds_pd), len(test_ds_pd)))
+
+    train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label)
+    test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
+
+    # Specify the model
+    model_1 = tfdf.keras.RandomForestModel(verbose=2)
+    
+    # Train the model
+    model_1.fit(train_ds)
+
+
+<a id="org6c64b64"></a>
+
+# Evaluate the model
+
+    model_1.compile(metrics=["accuracy"])
+    evaluation = model_1.evaluate(test_ds, return_dict=True)
+    print()
+    
+    for name, value in evaluation.items():
+        print(f"{name}: {value:.4f}")
+
+
+<a id="org48fa723"></a>
+
+# TensorFlow Serving
+
+    model_1.save("/tmp/my_saved_model")
+
+
+<a id="org20436f2"></a>
+
+# Model structure and feature importance
+
+    model_1.summary()
+
+
+<a id="org1da180b"></a>
+
+# Using make<sub>inspector</sub>
+
+    model_1.make_inspector().features()
+
+    model_1.make_inspector().variable_importances()
+
+
+<a id="orgb0b374e"></a>
+
+# Model self evaluation
+
+    model_1.make_inspector().evaluation()
+
+
+<a id="org9652351"></a>
+
+# Plotting the training logs
+
+    model_1.make_inspector().training_logs()
+
+    import matplotlib.pyplot as plt
+    
+    logs = model_1.make_inspector().training_logs()
+    
+    plt.figure(figsize=(12, 4))
+    
+    plt.subplot(1, 2, 1)
+    plt.plot([log.num_trees for log in logs], [log.evaluation.accuracy for log in logs])
+    plt.xlabel("Number of trees")
+    plt.ylabel("Accuracy (out-of-bag)")
+    
+    plt.subplot(1, 2, 2)
+    plt.plot([log.num_trees for log in logs], [log.evaluation.loss for log in logs])
+    plt.xlabel("Number of trees")
+    plt.ylabel("Logloss (out-of-bag)")
+    
+    plt.show()
+
+
+<a id="orgb844fc9"></a>
+
+# Retrain model with different learning algorithm
+
+    tfdf.keras.get_all_models()
+
+
+<a id="org690a674"></a>
+
+# Using a subset of features
+
+    feature_1 = tfdf.keras.FeatureUsage(name="bill_length_mm")
+    feature_2 = tfdf.keras.FeatureUsage(name="island")
+    
+    all_features = [feature_1, feature_2]
+    
+    # This model is only being trained on two features.
+    # It will NOT be as good as the previous model trained on all features.
+    
+    model_2 = tfdf.keras.GradientBoostedTreesModel(
+        features=all_features, exclude_non_specified_features=True)
+    
+    model_2.compile(metrics=["accuracy"])
+    model_2.fit(train_ds, validation_data=test_ds)
+    
+    print(model_2.evaluate(test_ds, return_dict=True))
+
+**TF-DF** attaches a **semantics** to each feature. This semantics controls how the feature is used by the model. The following semantics are currently supported.
+
+-   **Numerical**: Generally for quantities or counts with full ordering. For example, the age of a person, or the number of items in a bag. Can be a float or an integer. Missing values are represented with a float(Nan) or with an empty sparse tensor.
+-   **Categorical**: Generally for a type/class in finite set of possible values without ordering. For example, the color RED in the set {RED, BLUE, GREEN}. Can be a string or an integer. Missing values are represented as &ldquo;&rdquo; (empty string), value -2 or with an empty sparse tensor.
+-   **Categorical-Set**: A set of categorical values. Great to represent tokenized text. Can be a string or an integer in a sparse tensor or a ragged tensor (recommended). The order/index of each item doesnt matter.
+    
+    If not specified, the semantics is inferred from the representation type and shown in the training logs:
+    
+    -   int, float (dense or sparse) -> Numerical semantics
+    
+    -   str, (dense or sparse) -> Categorical semantics
+    
+    -   int, str (ragged) -> Categorical-Set semantics
+
+In some cases, the inferred semantics is incorrect. For example: An Enum stored as an integer is semantically categorical, but it will be detected as numerical. In this case, you should specify the semantic argument in the input. The education<sub>num</sub> field of the Adult dataset is a classic example.
+
+    feature_1 = tfdf.keras.FeatureUsage(name="year", semantic=tfdf.keras.FeatureSemantic.CATEGORICAL)
+    feature_2 = tfdf.keras.FeatureUsage(name="bill_length_mm")
+    feature_3 = tfdf.keras.FeatureUsage(name="sex")
+    all_features = [feature_1, feature_2, feature_3]
+    
+    model_3 = tfdf.keras.GradientBoostedTreesModel(features=all_features, exclude_non_specified_features=True)
+    model_3.compile(metrics=["accuracy"])
+    
+    model_3.fit(train_ds, validation_data=test_ds)
+
+Note that `year` is in the list of CATEGORICAL features (unlike the first run)
+
+
+<a id="org0de3588"></a>
+
+# Hyper-parameters
+
+**Hyper-parameters** are paramters of the training algorithm that impact the quality of the final model. They are specified in the model class constructor. The list of hyper-parameters is visible with the *question mark* colab command.
+
+**I will figure out how to obtain that list without the question mark command.**
+
+    # A classical but slightly more complex model.
+    model_6 = tfdf.keras.GradientBoostedTreesModel(
+        num_trees=500, growing_strategy="BEST_FIRST_GLOBAL", max_depth=8)
+    
+    model_6.fit(train_ds)
+
+    model_6.summary()
+
+    # A more complex, but possibly, more accurate model.
+    model_7 = tfdf.keras.GradientBoostedTreesModel(
+        num_trees=500,
+        growing_strategy="BEST_FIRST_GLOBAL",
+        max_depth=8,
+        split_axis="SPARSE_OBLIQUE",
+        categorical_algorithm="RANDOM",
+        )
+    
+    model_7.fit(train_ds)
+
+As new training methods are published and implemented, combinations of hyper-parameters can emerge as good or almost-always-better than the default parameters. To avoid changing the default hyper-parameter values these good combinations are indexed and availale as hyper-parameter templates.
+
+For example, the benchmark<sub>rank1</sub> template is the best combination on our internal benchmarks. Those templates are versioned to allow training configuration stability e.g. benchmark<sub>rank1</sub>@v1.
+
+    # A good template of hyper-parameters.
+    model_8 = tfdf.keras.GradientBoostedTreesModel(hyperparameter_template="benchmark_rank1")
+    model_8.fit(train_ds)
+
+The available templates are available with `predefined_hyperparameters`. Note that different learning algorithms have different templates, even if the name is similar.
+
+    print(tfdf.keras.GradientBoostedTreesModel.predefined_hyperparameters())
+
+What is returned are the predefined hyper-parameters of the Gradient Boosted Tree model.
+
+
+<a id="org31eb27d"></a>
+
+# Feature Preprocessing
+
+Pre-processing features is sometimes necessary to consume signals with complex structures, to regularize the model or to apply transfer learning. Pre-processing can be done in one of three ways:
+
+1.  **Preprocessing on the pandas dataframe**: This solution is easy tto implement and generally suitable for experiementation. However, the pre-processing logic will not be exported in the model by model.save()
+2.  **Keras Preprocessing**: While more complex than the previous solution, Keras Preprocessing is packaged in the model.
+3.  **TensorFlow Feature Columns**: This API is part of the TF Estimator library (!= Keras) and planned for deprecation. This solution is interesting when using existing preprocessing code.
+
+**Note**: Using **TensorFlow Hub** pre-trained embedding is often, a great way to consume text and image with TF-DF.
+
+In the next example, pre-process the body<sub>mass</sub><sub>g</sub> feature into body<sub>mass</sub><sub>kg</sub> = body<sub>mass</sub><sub>g</sub> / 1000. The bill<sub>length</sub><sub>mm</sub> is consumed without preprocessing. Note that such monotonic transformations have generally no impact on decision forest models.
+
+    body_mass_g = tf.keras.layers.Input(shape=(1,), name="body_mass_g")
+    body_mass_kg = body_mass_g / 1000.0
+    
+    bill_length_mm = tf.keras.layers.Input(shape=(1,), name="bill_length_mm")
+    
+    raw_inputs = {"body_mass_g": body_mass_g, "bill_length_mm": bill_length_mm}
+    processed_inputs = {"body_mass_kg": body_mass_kg, "bill_length_mm": bill_length_mm}
+    
+    # "preprocessor" contains the preprocessing logic.
+    preprocessor = tf.keras.Model(inputs=raw_inputs, outputs=processed_inputs)
+    
+    # "model_4" contains both the pre-processing logic and the decision forest.
+    model_4 = tfdf.keras.RandomForestModel(preprocessing=preprocessor)
+    model_4.fit(train_ds)
+    
+    model_4.summary()
+
+The following example re-implements the same logic using TensorFlow Feature Columns.
+
+    def g_to_kg(x):
+        return x / 1000
+    
+    feature_columns = [
+        tf.feature_column.numeric_column("body_mass_g", normalizer_fn=g_to_kg),
+        tf.feature_column.numeric_column("bill_length_mm"),
+    ]
+    
+    preprocessing = tf.keras.layers.DenseFeatures(feature_columns)
+    
+    model_5 = tfdf.keras.RandomForestModel(preprocessing=preprocessing)
+    model_5.fit(train_ds)
+
+
+<a id="orgf028a33"></a>
+
+# Training a regression model
+
+The previous example trains a classification model(TF-DF does not differentiate between binary classification and multi-class classification). In the next example, train a regression model on the Abalone dataset. The objective of this dataset is to predict the number of rings on a shell of a abalone.
+
+**Note**: The csv file is assembled by appending UCI&rsquo;s header and data files. No preprocessing was applied.
+
+    !wget -q https://storage.googleapis.com/download.tensorflow.org/data/abalone_raw.csv -O /tmp/abalone.csv
+    
+    dataset_df = pd.read_csv("/tmp/abalone.csv")
+    print(dataset_df.head(3))
+
+    # Split the dataset into a training and testing dataset.
+    train_ds_pd, test_ds_pd = split_dataset(dataset_df)
+    print("{} examples in training, {} examples for testing.".format(
+        len(train_ds_pd), len(test_ds_pd)))
+    
+    # Name of the label column.
+    label = "Rings"
+    
+    train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label, task=tfdf.keras.Task.REGRESSION)
+    test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label, task=tfdf.keras.Task.REGRESSION)
+
+    # Configure the model
+    model_7 = tfdf.keras.RandomForestModel(task = tfdf.keras.Task.REGRESSION)
+    
+    # Train the model
+    model_7.fit(train_ds)
+
+    # Evaluate the model on the test dataset
+    model_7.compile(metrics=["mse"])
+    evaluation = model_7.evaluate(test_ds, return_dict=True)
+    
+    print(evaluation)
+    print()
+    print(f"MSE: {evaluation['mse']}")
+    print(f"RMSE: {math.sqrt(evaluation['mse'])}")
+
+
+<a id="orgccbe2e2"></a>
+
+# Conclusion
+
+This concludes the basic overview of TensorFlow Decision Forest utility.
+
