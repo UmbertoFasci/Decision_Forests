@@ -30,7 +30,7 @@ The following document will contain the basic instructions for creating a decisi
 
 # Importing Libraries
 
-```jupyter-python
+```python
 import tensorflow_decision_forests as tfdf
 
 import os
@@ -40,7 +40,7 @@ import tensorflow as tf
 import math
 ```
 
-```jupyter-python
+```python
 print("Found TensorFlow Decision Forests v" + tfdf.__version__)
 ```
 
@@ -51,7 +51,7 @@ print("Found TensorFlow Decision Forests v" + tfdf.__version__)
 
 # Training a Random Forest model
 
-```jupyter-python
+```python
 # Download the dataset
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/palmer_penguins/penguins.csv -O /tmp/penguins.csv
 
@@ -72,7 +72,7 @@ dataset_df.head(3)
     1       3800.0  female  2007  
     2       3250.0  female  2007  
 
-```jupyter-python
+```python
 label = "species"
 
 classes = dataset_df[label].unique().tolist()
@@ -83,7 +83,7 @@ dataset_df[label] = dataset_df[label].map(classes.index)
 
     Label classes: ['Adelie', 'Gentoo', 'Chinstrap']
 
-```jupyter-python
+```python
 def split_dataset(dataset, test_ratio=0.30):
     test_indices = np.random.rand(len(dataset)) < test_ratio
     return dataset[~test_indices], dataset[test_indices]
@@ -95,14 +95,14 @@ print("{} examples in training, {} examples for testing.".format(
 
     243 examples in training, 101 examples for testing.
 
-```jupyter-python
+```python
 train_ds = tfdf.keras.pd_dataframe_to_tf_dataset(train_ds_pd, label=label)
 test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label)
 ```
 
     Metal device set to: Apple M1
 
-```jupyter-python
+```python
 # Specify the model
 model_1 = tfdf.keras.RandomForestModel(verbose=2)
 
@@ -331,7 +331,7 @@ Model compiled.
 
 # Evaluate the model
 
-```jupyter-python
+```python
 model_1.compile(metrics=["accuracy"])
 evaluation = model_1.evaluate(test_ds, return_dict=True)
 print()
@@ -351,7 +351,7 @@ for name, value in evaluation.items():
 
 # TensorFlow Serving
 
-```jupyter-python
+```python
 model_1.save("/tmp/my_saved_model")
 ```
 
@@ -364,7 +364,7 @@ model_1.save("/tmp/my_saved_model")
 
 # Model structure and feature importance
 
-```jupyter-python
+```python
 model_1.summary()
 ```
 
@@ -603,7 +603,7 @@ Training OOB:
 
 # Using make<sub>inspector</sub>
 
-```jupyter-python
+```python
 model_1.make_inspector().features()
 ```
 
@@ -615,7 +615,7 @@ model_1.make_inspector().features()
      "sex" (4; #6) 
      "year" (1; #7))
 
-```jupyter-python
+```python
 model_1.make_inspector().variable_importances()
 ```
 
@@ -653,7 +653,7 @@ model_1.make_inspector().variable_importances()
 
 # Model self evaluation
 
-```jupyter-python
+```python
 model_1.make_inspector().evaluation()
 ```
 
@@ -664,7 +664,7 @@ model_1.make_inspector().evaluation()
 
 # Plotting the training logs
 
-```jupyter-python
+```python
 model_1.make_inspector().training_logs()
 ```
 
@@ -672,7 +672,7 @@ model_1.make_inspector().training_logs()
 |-------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TrainLog | (num<sub>trees</sub>=1 evaluation=Evaluation (num<sub>examples</sub>=98 accuracy=0.9897959183673469 loss=0.36779236306949536 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=11 evaluation=Evaluation (num<sub>examples</sub>=240 accuracy=0.9416666666666667 loss=0.9464943699538708 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=22 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9547325102880658 loss=0.38051191389315414 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=32 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.37672530123848974 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=42 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9629629629629629 loss=0.22888033251458234 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=52 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.22635050861494532 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=62 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09214309737883478 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=72 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09669924490613702 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=82 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09933792135904355 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=92 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.099112403736193 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=106 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09770301330849958 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=116 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.0939756027986238 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=126 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09270708282083395 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=136 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09230172781296718 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=147 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09195313022046546 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=157 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09077992822606991 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=167 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09186600034849511 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=177 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09210005546670882 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=188 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09130537166900228 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=198 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9670781893004116 loss=0.09144260634672004 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=208 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.0922682062979527 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=218 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09234516689009627 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=228 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09248343468816192 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=238 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09262648260857097 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=250 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.09324301321274091 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=260 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9711934156378601 loss=0.0928760742684328 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=271 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9753086419753086 loss=0.09237068120405507 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=281 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9753086419753086 loss=0.09249307419108266 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=291 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9753086419753086 loss=0.09287857651373241 rmse=None ndcg=None aucs=None auuc=None qini=None)) | TrainLog | (num<sub>trees</sub>=300 evaluation=Evaluation (num<sub>examples</sub>=243 accuracy=0.9753086419753086 loss=0.09332247295344072 rmse=None ndcg=None aucs=None auuc=None qini=None)) |
 
-```jupyter-python
+```python
 import matplotlib.pyplot as plt
 
 logs = model_1.make_inspector().training_logs()
@@ -699,7 +699,7 @@ plt.show()
 
 # Retrain model with different learning algorithm
 
-```jupyter-python
+```python
 tfdf.keras.get_all_models()
 ```
 
@@ -712,7 +712,7 @@ tfdf.keras.get_all_models()
 
 # Using a subset of features
 
-```jupyter-python
+```python
 feature_1 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_2 = tfdf.keras.FeatureUsage(name="island")
 
@@ -767,7 +767,7 @@ Model compiled.
 
 In some cases, the inferred semantics is incorrect. For example: An Enum stored as an integer is semantically categorical, but it will be detected as numerical. In this case, you should specify the semantic argument in the input. The education<sub>num</sub> field of the Adult dataset is a classic example.
 
-```jupyter-python
+```python
 feature_1 = tfdf.keras.FeatureUsage(name="year", semantic=tfdf.keras.FeatureSemantic.CATEGORICAL)
 feature_2 = tfdf.keras.FeatureUsage(name="bill_length_mm")
 feature_3 = tfdf.keras.FeatureUsage(name="sex")
@@ -811,7 +811,7 @@ Note that `year` is in the list of CATEGORICAL features (unlike the first run)
 
 **I will figure out how to obtain that list without the question mark command.**
 
-```jupyter-python
+```python
 # A classical but slightly more complex model.
 model_6 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500, growing_strategy="BEST_FIRST_GLOBAL", max_depth=8)
@@ -837,7 +837,7 @@ Model compiled.
 
     <keras.callbacks.History at 0x16dc91040>
 
-```jupyter-python
+```python
 model_6.summary()
 ```
 
@@ -1079,7 +1079,7 @@ Number of iteration to final model: 500
 	Iter:496 train-loss:0.000004 valid-loss:0.000076  train-accuracy:1.000000 valid-accuracy:1.000000
 ```
 
-```jupyter-python
+```python
 # A more complex, but possibly, more accurate model.
 model_7 = tfdf.keras.GradientBoostedTreesModel(
     num_trees=500,
@@ -1119,7 +1119,7 @@ As new training methods are published and implemented, combinations of hyper-par
 
 For example, the benchmark<sub>rank1</sub> template is the best combination on our internal benchmarks. Those templates are versioned to allow training configuration stability e.g. benchmark<sub>rank1</sub>@v1.
 
-```jupyter-python
+```python
 # A good template of hyper-parameters.
 model_8 = tfdf.keras.GradientBoostedTreesModel(hyperparameter_template="benchmark_rank1")
 model_8.fit(train_ds)
@@ -1150,7 +1150,7 @@ Model compiled.
 
 The available templates are available with `predefined_hyperparameters`. Note that different learning algorithms have different templates, even if the name is similar.
 
-```jupyter-python
+```python
 print(tfdf.keras.GradientBoostedTreesModel.predefined_hyperparameters())
 ```
 
@@ -1173,7 +1173,7 @@ Pre-processing features is sometimes necessary to consume signals with complex s
 
 In the next example, pre-process the body<sub>mass</sub><sub>g</sub> feature into body<sub>mass</sub><sub>kg</sub> = body<sub>mass</sub><sub>g</sub> / 1000. The bill<sub>length</sub><sub>mm</sub> is consumed without preprocessing. Note that such monotonic transformations have generally no impact on decision forest models.
 
-```jupyter-python
+```python
 body_mass_g = tf.keras.layers.Input(shape=(1,), name="body_mass_g")
 body_mass_kg = body_mass_g / 1000.0
 
@@ -1384,7 +1384,7 @@ Training OOB:
 
 The following example re-implements the same logic using TensorFlow Feature Columns.
 
-```jupyter-python
+```python
 def g_to_kg(x):
     return x / 1000
 
@@ -1431,7 +1431,7 @@ The previous example trains a classification model(TF-DF does not differentiate 
 
 **Note**: The csv file is assembled by appending UCI&rsquo;s header and data files. No preprocessing was applied.
 
-```jupyter-python
+```python
 !wget -q https://storage.googleapis.com/download.tensorflow.org/data/abalone_raw.csv -O /tmp/abalone.csv
 
 dataset_df = pd.read_csv("/tmp/abalone.csv")
@@ -1448,7 +1448,7 @@ print(dataset_df.head(3))
     1         0.0485         0.07      7  
     2         0.1415         0.21      9  
 
-```jupyter-python
+```python
 # Split the dataset into a training and testing dataset.
 train_ds_pd, test_ds_pd = split_dataset(dataset_df)
 print("{} examples in training, {} examples for testing.".format(
@@ -1463,7 +1463,7 @@ test_ds = tfdf.keras.pd_dataframe_to_tf_dataset(test_ds_pd, label=label, task=tf
 
     2898 examples in training, 1279 examples for testing.
 
-```jupyter-python
+```python
 # Configure the model
 model_7 = tfdf.keras.RandomForestModel(task = tfdf.keras.Task.REGRESSION)
 
@@ -1486,7 +1486,7 @@ Model compiled.
 
     <keras.callbacks.History at 0x1578aa8e0>
 
-```jupyter-python
+```python
 # Evaluate the model on the test dataset
 model_7.compile(metrics=["mse"])
 evaluation = model_7.evaluate(test_ds, return_dict=True)
