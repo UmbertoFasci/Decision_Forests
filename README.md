@@ -11,5 +11,5 @@ TensorFlow Decision Forests (TF-DF) is a library to train, run and interpret dec
  
 |**Description**|**File**|
 |-|-|
-|Official TensorFlow DF Documentation Overview|[TFDF Basic Overview](https://github.com/UmbertoFasci/Decision_Forests/blob/main/Decision_trees_test.md)|
+|Official TensorFlow DF Documentation Overview|[Basic Overview](https://github.com/UmbertoFasci/Decision_Forests/blob/main/Decision_trees_test.md)|
 
